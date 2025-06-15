@@ -6,7 +6,7 @@ binary_path = "/code/llama.cpp/build/bin/llama-cli"
 
 print('CLI-Mode: "deepseek-coder-6.7b-base"')
 while True:
-    prompt = input("> ").strip()
+    prompt = input("> ").strip() 
     if prompt.lower() in {"exit", "quit"}:
         break
     elif prompt.lower() == "clear":

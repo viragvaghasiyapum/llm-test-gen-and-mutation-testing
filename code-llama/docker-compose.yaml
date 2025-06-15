@@ -3,7 +3,7 @@ version: "3.9"
 services:
   codellama-cli:
     build:
-      context: .
+      context: . 
       dockerfile: dockerfile
     image: code-llama
     container_name: codellama-cli

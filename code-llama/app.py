@@ -4,7 +4,7 @@ import os
 model_path = "/code/model/codellama-7b.Q4_K_M.gguf"
 binary_path = "/code/llama.cpp/build/bin/llama-cli"
 
-print('CLI-Mode: "codellama-7b-base"')
+print('CLI-Mode: "codellama-7b-base"') 
 while True:
     prompt = input("> ").strip()
     if prompt.lower() in {"exit", "quit"}:

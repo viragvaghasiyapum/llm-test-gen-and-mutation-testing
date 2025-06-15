@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile
-    image: deepseek-coder
+    image: deepseek-coder 
     container_name: deepseek-cli
     volumes:
       - ~/codespace/python/seminar/deepseek-coder/model:/code/model   # Mount local model directory to /models inside container
