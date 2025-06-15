@@ -1,5 +1,4 @@
-# llm-test-gen-and-mutation-testing
-Test Generation using LLM and Mutation Testing
+# Test Generation using LLM and Mutation Testing
 
 For setting up LLM models (path: /model - seperately in both llm directory)
  - wget https://huggingface.co/TheBloke/deepseek-coder-6.7B-base-GGUF/resolve/main/deepseek-coder-6.7b-base.Q4_K_M.gguf
