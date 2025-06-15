@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  codellama-cli:
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: code-llama
+    container_name: codellama-cli
+    volumes:
+      - ~/codespace/python/seminar/code-llama/model:/code/model   # Mount local model directory to /models inside container
+      - ~/codespace/python/seminar/code-llama/src:/code/src
+      - ~/codespace/python/seminar/deepseek-coder/app.py:/code/app.py 
+    working_dir: /code
+    stdin_open: true         # Required for interactive terminal input
+    tty: true

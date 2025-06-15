@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  deepseek-cli:
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: deepseek-coder
+    container_name: deepseek-cli
+    volumes:
+      - ~/codespace/python/seminar/deepseek-coder/model:/code/model   # Mount local model directory to /models inside container
+      - ~/codespace/python/seminar/deepseek-coder/src:/code/src
+      - ~/codespace/python/seminar/deepseek-coder/app.py:/code/app.py
+    working_dir: /code
+    stdin_open: true         # Required for interactive terminal input
+    tty: true
