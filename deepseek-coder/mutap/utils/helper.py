@@ -1,17 +1,19 @@
 import os
 from pathlib import Path
 import os
+import datetime
+import shutil
+from typing import Union
 
-def save_checkpoint(task_id: str, run: int, label: str, content: str):
+def save_checkpoint(name: str, label: str, content: str, task_id: str) -> Union[str, bool]:
     try:
         out_dir = getPath(label, task_id)
-        filename = f"{label}_run{run}_{task_id}.py"
-        filepath = os.path.join(out_dir, filename)
+        filepath = os.path.join(out_dir, name)
         with open(filepath, "w") as f:
             f.write(content)
         return str(filepath)
     except Exception as e:
-        print(f"Error saving checkpoint for {task_id} run {run} label {label}: {e}")
+        print(f"\nError saving checkpoint for {name}: {e}\n\n")
         return False
 
 def getPath(name, id=None):
@@ -22,7 +24,7 @@ def getPath(name, id=None):
 
         check = False
         path = None
-        if name in {"mutants", "testcases", "prompts", "refinement"}:
+        if name in {"mutants", "testcases", "prompts", "mutpy_formatted_tests"}:
             if not id:
                 raise ValueError(f"ID is required for path type '{name}'")
             path = os.path.join(base_dir, "output", "humaneval", "formatted", id, name)
@@ -73,16 +75,8 @@ def isExistOrCreate(path: str) -> bool:
     except Exception as e:
         print(f"Error crreating path '{path}': {e}")
         return False
-    
-def py_file_reader(file_path: str) -> str:
-    try:
-        with open(file_path, 'r') as file:
-            return file.read()
-    except Exception as e:
-        print(f"Error reading file '{file_path}': {e}")
-        return ""
-    
-def writeLog(content: str, name: str) -> bool:
+
+def writeTmpLog(content: str, name: str) -> bool:
     try:
         tmp_dir = getPath('tmp')
         file_path = os.path.join(tmp_dir, name)
@@ -91,4 +85,47 @@ def writeLog(content: str, name: str) -> bool:
         return True
     except Exception as e:
         print(f"Error writing to log file '{file_path}': {e}")
+        return False
+
+def cleanOldRunFiles(id= None, cleanTemp= False):
+    try:
+        if cleanTemp:
+            dirs = [getPath('tmp')]
+        else:
+            dirs = [
+                getPath('prompts', id),
+                getPath('mutpy_formatted_tests', id),
+                getPath('mutants', id),
+                getPath('testcases', id)
+            ]
+        for path in dirs:
+            shutil.rmtree(path)
+            print(f"Cleaned old runs files from path: {path}..")
+    except Exception as e:
+        print(f"Error cleaning old runs: {e}")
+
+
+def writeReportLog(file, dir, info, content: str, taskId, run) -> bool:
+    
+    heading = f"/*\n=============================================\n\tTask: {taskId}\n\tInfo: {info}\n\tTime: {datetime.datetime.now()}\n=============================================\n*/\n"
+
+    start_str = f"\n------------------------------\n| Run: {run} (start) |\n------------------------------\n"
+    end_str = f"\n------------------------------\n| Run: {run} (end) |\n------------------------------\n"
+
+    try:
+        report_dir = getPath(dir, taskId)
+        if not report_dir:
+            print(f"Report directory for {file} could not be resolved.")
+            return False
+        
+        file_path = os.path.join(report_dir, file)
+        if not os.path.exists(file_path):
+            content = heading + start_str + content + end_str
+        else:
+            content = start_str + content + end_str
+        with open(file_path, 'a') as f:
+            f.write(content)
+        return True
+    except Exception as e:
+        print(f"Error writing report log for {file}: {e}")
         return False

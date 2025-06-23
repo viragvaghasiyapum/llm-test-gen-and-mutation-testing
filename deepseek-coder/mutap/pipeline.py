@@ -12,50 +12,62 @@ from mutap.utils.mutpy_test_file_conversion import format_testcases
 from mutap.utils.mutpy_test_file_conversion import extract_func_name
 
 def run_pipeline(limit=None, mode="zero_shot"):
+    
+    helper.cleanOldRunFiles(cleanTemp= True)
     problems = get_problems()
     if limit:
         problems = problems[:limit]
 
-    allowed_run = 10
+    initial_test_run = 1
     for idx, problem in enumerate(problems):    
         task_id = problem['task_id']
         put_code = problem['code']
-        run = 1
+        run = 0
+
+        helper.cleanOldRunFiles(id= task_id)
         
         print("--------------------------------------------------------------------\n")
         print(f"\n{task_id}: in execution\n")
         print(f"{task_id}: buidling initial prompt")
 
         initial_prompt = build_prompts(put_code, examples, type=mode)
-        helper.save_checkpoint(task_id, run, 'prompts', initial_prompt)
+        helper.writeReportLog('initial_prompt.log', 'prompts', 'initial prompt', initial_prompt, task_id, run)
 
-        while allowed_run > 0:
-            allowed_run -= 1
-            print(f"{task_id}: generating raw test cases")
+        while initial_test_run <= 10:
+            print(f"{task_id} -> subrun {initial_test_run}: generating raw test cases")
             raw_initial_unit_test = prompt_deepseek_llmc(initial_prompt)
-            helper.save_checkpoint(task_id, run, 'testcases', raw_initial_unit_test)
+            helper.writeReportLog('initial_raw_tests.log', 'testcases', 'raw initial unit tests (raw_IUT) with 10 subruns, last successful output will be considered 0th raw initial unit test', raw_initial_unit_test, task_id, initial_test_run)
 
-            print(f"{task_id}: refining raw test cases\n")
+            print(f"{task_id} -> subrun {initial_test_run}: refining raw test cases\n")
             initial_unit_test = refine_test_cases(raw_initial_unit_test, put_code, task_id, run)
+            helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', "\n".join(initial_unit_test), task_id, initial_test_run)
             
             if initial_unit_test != False:
                 break
-        
+            initial_test_run += 1
+    
         if initial_unit_test == False:
-            print(f"{task_id}: unable to refine test cases after {10 - allowed_run} attempts, skipping...")
+            print(f"{task_id}: unable to generate initial test cases after {initial_test_run} attempts, skipping..., check tmp logs for more details.")
             continue
-        test_file_path =format_testcases(
+
+        test_file_path = format_testcases(
             "\n".join(initial_unit_test),
             task_id,
             run,
             extract_func_name(initial_unit_test[1]).strip() if len(initial_unit_test) > 1 else "TestFunction"
         )
-        helper.save_checkpoint(task_id, run, 'refinement', "\n".join(initial_unit_test))
+
+        if not test_file_path:
+            print(f"{task_id}: unable to format test cases for mutpy, skipping..., check tmp logs for more details.")
+            continue
 
         print(f"{task_id}: mutating task & out for killing mutants (Charles, you better watch out <_>)")
-        # test_file_path = helper.getPath('refinement', task_id) + f"/mutpy_testcase_run{run}_{task_id}.py"
         mutation_result = run_mutation_testing(task_id, test_file_path, run)
         
+        if not mutation_result:
+            print(f"{task_id}: unable to generate initial mutants, skipping..., check tmp logs for more details.")
+            continue
+
         mutants_survived = int(mutation_result['survived']['total'])
         mutants = mutation_result['survived']['mutants']
         print(f"{task_id}: run_{run} mission report... ")
@@ -74,16 +86,18 @@ def run_pipeline(limit=None, mode="zero_shot"):
             augmented_unit_test = augmentation_process(
                 mutants_survived,
                 put_code,
-                initial_prompt,
                 initial_unit_test,
                 mutants,
                 task_id,
                 int(run)
             )
+            if not augmentation_process:
+                print(f"{task_id}: unable to generate augmented unit tests, skipping..., check tmp logs for more details.")
+                continue
         else:
             augmented_unit_test = initial_unit_test
         
-        final_unit_tests = minimize_oracles(task_id, put_code, augmented_unit_test)
+        final_unit_tests = minimize_oracles(task_id, augmented_unit_test)
         
         print("Final Tests for", task_id)
         print(final_unit_tests)

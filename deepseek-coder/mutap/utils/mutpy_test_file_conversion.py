@@ -32,8 +32,8 @@ def format_testcases(code: str, id: str, run: int, function_name="has_close_elem
 
         test_class_code = "\n".join(lines)
 
-        path = helper.getPath('refinement', id)
-        file_path = f"{path}/mutpy_testcase_run{run}_{id}.py"
+        path = helper.getPath('mutpy_formatted_tests', id)
+        file_path = f"{path}/mutpy_testcase_run{run}.py"
 
         with open(file_path, "w") as f:
             f.write(test_class_code)
@@ -41,8 +41,8 @@ def format_testcases(code: str, id: str, run: int, function_name="has_close_elem
         return file_path
 
     except Exception as e:
-        print(f"Error formatting test cases for {id} run {run}: {e}")
-        return None
+        helper.writeTmpLog(f"Error (mupty_format_conversion): issue formatting test cases for {id} run {run} -> {e}", 'test_generation.log')
+        return False
 
 
 def extract_func_name(line: str) -> str:

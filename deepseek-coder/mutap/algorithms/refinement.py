@@ -1,7 +1,7 @@
 # mutap/algorithms/refinement.py
 import ast
 import re
-import mutap.algorithms.test_generation as test_gen
+from mutap.utils.helper import writeTmpLog 
 
 # Do not work
 # def syntax_fix(test: str, put_code) -> str:
@@ -54,28 +54,40 @@ def syntax_check(test, function_name: str) -> bool:
 
 
 def intended_behavior_fix(tests: list, put_code: str) -> list:
-    fixed = [tests[0]]
-    for line in tests[1:]:
-        try:
-            local_env = {}
-            expr = line.strip().replace("assert", "", 1).split("==")[0].strip()
-            exec(put_code + f"\nresult = {expr}", {}, local_env)
-            actual = local_env.get("result")
-            fixed.append(f"\tassert {expr} == {repr(actual)}")
-        except Exception as e:
-            print(f"Error refining test case '{line.strip()}': {e}")
-            continue
+    try:
+        fixed = [tests[0]]
+        for line in tests[1:]:
+            try:
+                local_env = {}
+                expr = line.strip().replace("assert", "", 1).split("==")[0].strip()
+                exec(put_code + f"\nresult = {expr}", {}, local_env)
+                actual = local_env.get("result")
+                fixed.append(f"\tassert {expr} == {repr(actual)}")
+            except Exception as e:
+                print(f"Error refining a test case '{line.strip()}': {e}")
+                continue
+    except Exception as e:
+        fixed = False
+        writeTmpLog("\nError (refinement): issue fixing intended behaviour -> {e}.", 'test_generation.log')
     return fixed
 
 def refine_test_cases(raw_tests: str, put_code: str, task_id, run) -> list:
-    lines = raw_tests.strip().splitlines()
-    function_name = extract_function_name(put_code)
-    # syntactically_valid = syntax_fix("\n".join(lines), put_code)
-    syntactically_valid = syntax_check("\n".join(lines), function_name)
-    if (syntactically_valid == False):
-        return False
-    return intended_behavior_fix(syntactically_valid, put_code)
+    try: 
+        lines = raw_tests.strip().splitlines()
+        function_name = extract_function_name(put_code)
+        if not function_name:
+            writeTmpLog("\nError (refinement): extracting function while refining test cases.", 'test_generation.log')
+            return '';
+        # syntactically_valid = syntax_fix("\n".join(lines), put_code)
+        syntactically_valid = syntax_check("\n".join(lines), function_name)
+        if (syntactically_valid == False):
+            writeTmpLog("\nError (refinement): extracting function while refining test cases.", 'test_generation.log')
+            return False
+        return intended_behavior_fix(syntactically_valid, put_code)
+    except Exception as e:
+        writeTmpLog("\nError (refinement): issue refining test cases -> {e}.", 'test_generation.log')
+    return False
 
 def extract_function_name(code_str: str) -> str:
     match = re.search(r"def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(", code_str)
-    return match.group(1) if match else None 
+    return match.group(1) if match else False 

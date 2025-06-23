@@ -16,7 +16,7 @@ def prompt_deepseek_llmc(prompt, tag = "test") -> str:
         ], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
 
         full_output = process.stdout.read()
-        helper.writeLog(full_output, "test_generation.log")
+        helper.writeTmpLog(full_output, "deepseek_llmc.log")
         test_str = f"<{tag}>(.*?)</{tag}>"
         match = re.search(test_str, full_output, re.DOTALL)
         if match:
@@ -24,7 +24,7 @@ def prompt_deepseek_llmc(prompt, tag = "test") -> str:
             output = clean_test_output(raw_output)
 
     except Exception as e:
-        output = f"# Error during generation: {e}"
+        helper.writeTmpLog(f"\n Error (test_generation): issue -> {e}", 'test_generation.log')
 
     return output
 
@@ -34,38 +34,42 @@ def extract_function_name(line: str) -> str:
     return match.group(1) if match else ""
 
 def clean_test_output(raw_test_code: str) -> str:
-    cleaned_asserts = []
-    function_name = ""
+    try:
+        cleaned_asserts = []
+        function_name = ""
 
-    lines = raw_test_code.strip().splitlines()
-    inside_test_func = False
+        lines = raw_test_code.strip().splitlines()
+        inside_test_func = False
 
-    for line in lines:
-        line = line.strip()
+        for line in lines:
+            line = line.strip()
 
-        if line.startswith("def test"):
-            inside_test_func = True
-            continue  # We'll add this manually later
+            if line.startswith("def test"):
+                inside_test_func = True
+                continue  # We'll add this manually later
 
-        if not inside_test_func:
-            continue
-
-        if not line.startswith("assert "):
-            continue
-
-        if not re.match(r"assert\s+.+\s+==\s+.+", line):
-            continue
-
-        if not function_name:
-            function_name = extract_function_name(line)
-            if not function_name:
+            if not inside_test_func:
                 continue
 
-        if function_name in line:
-            cleaned_asserts.append("    " + line)
+            if not line.startswith("assert "):
+                continue
 
-    # Wrap in def test(): only if we found valid asserts
-    if cleaned_asserts:
-        return "def test():\n" + "\n".join(cleaned_asserts)
-    else:
-        return ""
+            if not re.match(r"assert\s+.+\s+==\s+.+", line):
+                continue
+
+            if not function_name:
+                function_name = extract_function_name(line)
+                if not function_name:
+                    continue
+
+            if function_name in line:
+                cleaned_asserts.append("    " + line)
+
+        # Wrap in def test(): only if we found valid asserts
+        if cleaned_asserts:
+            return "def test():\n" + "\n".join(cleaned_asserts)
+        else:
+            return ""
+    except Exception as e:
+        helper.writeTmpLog("\nError (test_generation): issue cleaning tests -> {e}.", 'test_generation.log')
+    return ""
