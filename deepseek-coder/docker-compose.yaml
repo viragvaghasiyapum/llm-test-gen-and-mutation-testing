@@ -8,9 +8,13 @@ services:
     image: deepseek-coder 
     container_name: deepseek-cli
     volumes:
-      - ~/codespace/python/seminar/deepseek-coder/model:/code/model   # Mount local model directory to /models inside container
-      - ~/codespace/python/seminar/deepseek-coder/src:/code/src
-      - ~/codespace/python/seminar/deepseek-coder/app.py:/code/app.py
+      - ./data:/code/data
+      - ./model:/code/model
+      - ./mutap:/code/mutap
+      - ./scripts:/code/scripts
+      - ./output:/code/output
+      - ./main.py:/code/main.py
+      - ./tmp:/code/tmp
     working_dir: /code
     stdin_open: true         # Required for interactive terminal input
     tty: true

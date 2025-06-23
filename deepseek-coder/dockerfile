@@ -1,12 +1,19 @@
 FROM ubuntu:24.04
+FROM python:3.9-slim
 
 # Install dependencies
 RUN apt update && apt install -y \
     git build-essential cmake curl unzip wget python3 python3-pip \
-    libopenblas-dev libomp-dev libcurl4-openssl-dev
+    libopenblas-dev libomp-dev libcurl4-openssl-dev python3-dotenv vim
 
-# Create /code directory 
+# Create /code directory
 WORKDIR /code
+
+RUN pip install mutpy
+
+RUN pip install beautifulsoup4
+
+RUN pip install pyyaml
 
 # Clone llama.cpp into /code/llama.cpp and build with CMake
 RUN git clone https://github.com/ggerganov/llama.cpp.git /code/llama.cpp && \
@@ -15,8 +22,4 @@ RUN git clone https://github.com/ggerganov/llama.cpp.git /code/llama.cpp && \
     cmake .. -DLLAMA_CURL=OFF && \
     cmake --build . --config Release
 
-# Copy your terminal interface into /code
-COPY app.py /code/app.py
-
-# Entry point
-CMD ["python3", "app.py"]
+CMD ["python3", "main.py"]

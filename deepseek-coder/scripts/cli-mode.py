@@ -1,8 +1,6 @@
 import subprocess
 import os
-
-model_path = "/code/model/deepseek-coder-6.7b-base.Q4_K_M.gguf"
-binary_path = "/code/llama.cpp/build/bin/llama-cli"
+import mutap.utils.helper as helper
 
 print('CLI-Mode: "deepseek-coder-6.7b-base"')
 while True:
@@ -16,8 +14,8 @@ while True:
 
     try:
         process = subprocess.Popen([
-                binary_path,
-                "-m", model_path,
+                helper.getPath("binary"),
+                "-m", helper.getPath("model"),
                 "-p", prompt,
                 "--n-predict", "512",
                 "--temp", "0.2",

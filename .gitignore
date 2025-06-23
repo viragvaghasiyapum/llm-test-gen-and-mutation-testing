@@ -1,4 +1,15 @@
 docs/
 /*/model
 /*/src
-/*/.vscode 
+/*/.vscode
+**/__pycache__/
+/deepseek-coder/data/humaneval/human_eval_full.md
+/deepseek-coder/data/humaneval/human-eval-v2-20210705.jsonl
+/deepseek-coder/data/refactory/*
+/deepseek-coder/output/humaneval/formatted/*
+/deepseek-coder/tmp/
+/data.zip
+/Untitled-1.py
+/what is unit testing.md
+/deepseek-coder.zip
+/code-reference/*
