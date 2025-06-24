@@ -7,9 +7,9 @@ def build_prompts(put_code, examples, type="zero_shot"):
 
     def build_few_shot():
         prompt = ""
-        for example in examples:
-            prompt += f"<code>{example['code']}</code>\n<test>{example['test']}</test>\n"
-        prompt += f"<code>{put_code}</code>\n <test>"
+        # for example in examples:
+        #     prompt += f"\n# EXAMPLES:\n<code>\n{example['code']}\n</code>\n\n<test>\n{example['test']}\n</test>\n"
+        prompt += f"<code>\n{put_code}\n</code>\n\n<test>\ndef test():\n    \n"
         return prompt
 
     return build_few_shot() if type == "few_shot" else build_zero_shot()

@@ -5,24 +5,28 @@ import re
 from bs4 import BeautifulSoup
 import yaml
 
-def run_mutation_testing(task_id: str, test_path: str, run, log=True):
+def run_mutation_testing(task_id: str, test_path: str, run, isOracleRun=False):
 
     put_path = helper.getPath('formatted_humaneval') + "/" + task_id + "/function.py"
     out_dir = helper.getPath('mutants', task_id)
     report_dir = helper.getPath('reports', task_id)
-
+    oracle_report_dir = helper.getPath('oracle_run', task_id)
     try:
         result = subprocess.run([
             "mut.py",
             "--target", put_path,
             "--unit-test", test_path,
             "--report-html", os.path.join(out_dir),
-            "--report", os.path.join(out_dir, "report.yaml"),
+            "--report", os.path.join(out_dir, f"report{run}.yaml"),
             "--show-mutants"
         ], capture_output=True, text=True, check=True)
         output_lines = result.stdout.splitlines()
 
-        if log:
+        if isOracleRun:
+            with open(os.path.join(oracle_report_dir, f"all_mutant_single_testcase{run}.log"), "w") as log:
+                for line in output_lines:
+                    log.write(f"{line}\n")
+        else:
             with open(os.path.join(report_dir, f"all_mutants_run{run}.log"), "w") as log:
                 for line in output_lines:
                     log.write(f"{line}\n")
@@ -30,7 +34,7 @@ def run_mutation_testing(task_id: str, test_path: str, run, log=True):
         mutant_files_path = os.path.join(out_dir, "mutants")
         extract_mutant_code(mutant_files_path, out_dir)
 
-        mutant_log_path = os.path.join(out_dir, "report.yaml")
+        mutant_log_path = os.path.join(out_dir, f"report{run}.yaml")
         result = extract_mutation_summary(mutant_log_path)
         
         # Clean up temporary files
@@ -77,8 +81,6 @@ def extract_mutation_summary(yaml_path):
                 survived.append(f"mutant_{m.get('number')}.py")
             if m.get('status') == 'killed':
                 killed.append(m["number"])
-
-        killed_mutants = total_mutants - len(survived)
 
         return {
             "mutation_score": mutation_score,

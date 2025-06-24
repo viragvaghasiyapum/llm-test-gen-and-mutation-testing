@@ -13,14 +13,14 @@ from mutap.utils.mutpy_test_file_conversion import extract_func_name
 import time
 
 def run_pipeline(limit=None, mode="zero_shot"):
-    
     helper.cleanOldRunFiles(cleanTemp= True)
     problems = get_problems()
     if limit:
         problems = problems[:limit]
 
-    initial_test_run = -1
-    for idx, problem in enumerate(problems):    
+    for idx, problem in enumerate(problems): 
+          
+        initial_test_run = -1
         task_id = problem['task_id']
         put_code = problem['code']
         run = 0
@@ -46,7 +46,7 @@ def run_pipeline(limit=None, mode="zero_shot"):
             print(f"{task_id} -> subrun {initial_test_run}: refining raw test cases\n")
             initial_unit_test = refine_test_cases(raw_initial_unit_test, put_code, task_id, run)
             if not initial_unit_test:
-                helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', initial_unit_test, task_id, initial_test_run)
+                helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', str(initial_unit_test), task_id, initial_test_run)
             else:
                 helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', "\n".join(initial_unit_test), task_id, initial_test_run)
                 break
@@ -66,7 +66,7 @@ def run_pipeline(limit=None, mode="zero_shot"):
             print(f"{task_id}: unable to format test cases for mutpy, skipping..., check tmp logs for more details.")
             continue
 
-        print(f"{task_id}: mutating task & out for killing mutants (Charles, you better watch out <_>)")
+        print(f"{task_id}: mutating task & out for killing mutants (Charles, you better watch out <_>)\n")
         mutation_result = run_mutation_testing(task_id, test_file_path, run)
         
         if not mutation_result:
@@ -81,8 +81,10 @@ def run_pipeline(limit=None, mode="zero_shot"):
         print(f"\t killed_mutants: {mutation_result['killed']['total']}")
         print(f"\t mutant_survived: {mutants_survived} -> {mutants}")
         print(f"\t mutation_testing_time: {mutation_result['total_time']}")
-        print(f"\n\t {'' if mutants_survived > 0 else '( haha, gotcha charles! x_x )'}")      
+        if mutants_survived <= 0:
+            print("\n\t( haha, gotcha charles! x_x )")      
 
+        augmented_unit_test = []
         if mutants_survived > 0 :
             if len(mutants) <= 0 :
                 print(f"{task_id}: mutants list is empty")

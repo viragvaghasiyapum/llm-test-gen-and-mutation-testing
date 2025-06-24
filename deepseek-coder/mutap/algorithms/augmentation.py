@@ -16,9 +16,9 @@ def augmentation_process(mutants_survived: int, put_code: str,
     surving_mutants = mutants
 
     try:
-        allowed_run = 1
+        allowed_run = 0
         while mutants_survived > 0 and len(surving_mutants) > 0 and allowed_run <= 10:
-            run += 1
+            allowed_run += 1
             mutant_code = ""
             mutant_dir = helper.getPath('mutants', task_id)
             mutant_file = os.path.join(mutant_dir, surving_mutants.pop())
@@ -69,13 +69,15 @@ def augmentation_process(mutants_survived: int, put_code: str,
             print(f"\t killed: {mutation_result['killed']['total']}")
             print(f"\t survived: {mutants_survived} -> {mutants}")
             print(f"\t mutation_testing_time: {mutation_result['total_time']}")
-            print(f"\n\t {'' if mutants_survived > 0 else '( haha, gotcha charles! x_x )'}")
+            if mutants_survived <= 0:
+                print("\n\t( haha, gotcha charles! x_x )")
         
             surving_mutants = mutants
-            allowed_run += 1
+            
 
         if len(surving_mutants) > 0:
             print("\n( Charles, you got away this time... -_- )")
+        
         return current_test_suite
     except Exception as e:
         helper.writeTmpLog(f"\n Error (augmentation): issue augmenting testcases and mutation testing -> {e}", 'test_generation.log')

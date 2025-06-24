@@ -32,8 +32,11 @@ def getPath(name, id=None):
         elif name == "reports":
             path = os.path.join(base_dir, "output", "humaneval", "formatted", id, "mutants", "reports")
             check = True
+        elif name == "oracle_run":
+            path = os.path.join(base_dir, "output", "humaneval", "formatted", id, "mutants", "reports", "oracle_run")
+            check = True
         elif name == "model":
-            path = os.path.join(base_dir, "model", "codellama-7b.Q4_K_M.gguf")
+            path = os.path.join(base_dir, "model", "deepseek-coder-6.7b-base.Q4_K_M.gguf")
         elif name == "binary":
             path = os.path.join(base_dir, "llama.cpp", "build", "bin", "llama-cli")
         elif name == "humaneval_src":
