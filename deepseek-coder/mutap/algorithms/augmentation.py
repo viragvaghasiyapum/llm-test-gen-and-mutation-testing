@@ -27,7 +27,7 @@ def augmentation_process(mutants_survived: int, put_code: str,
 
             # Augment prompt
             ins3 = "\n# FAULTY code:"
-            ins4 = """\n#generate NEW assert-based unit tests\n# test case:\n<test>\ndef test():\n    assert"""
+            ins4 = """\n# generate NEW assert-based unit tests\n# test case:\n<test>\ndef test():\n    assert"""
             augmented_prompt = f"{ins3}\n<code>\n{mutant_code}\n</code>\n{ins4}"
             helper.writeReportLog('augmented_prompt.log', 'prompts', 'augmented prompts', augmented_prompt, task_id, allowed_run)
 
@@ -65,10 +65,10 @@ def augmentation_process(mutants_survived: int, put_code: str,
             mutants = mutation_result['survived']['mutants']
             print(f"\n{task_id}: run_{allowed_run} mission report... ")
             print(f"\t mutation_score: {mutation_result ['mutation_score']}")
-            print(f"\t mutant_survived: {mutation_result['total_mutants']}")
-            print(f"\t mutant_survived: {mutation_result['killed']['total']}")
-            print(f"\t mutant_survived: {mutants_survived} -> {mutants}")
-            print(f"\t mutant_survived: {mutation_result['total_time']}")
+            print(f"\t total_mutants: {mutation_result['total_mutants']}")
+            print(f"\t killed: {mutation_result['killed']['total']}")
+            print(f"\t survived: {mutants_survived} -> {mutants}")
+            print(f"\t mutation_testing_time: {mutation_result['total_time']}")
             print(f"\n\t {'' if mutants_survived > 0 else '( haha, gotcha charles! x_x )'}")
         
             surving_mutants = mutants
