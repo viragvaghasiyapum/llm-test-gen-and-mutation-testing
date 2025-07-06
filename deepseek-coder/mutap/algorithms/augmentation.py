@@ -5,10 +5,10 @@ import mutap.utils.helper as helper
 from data.humaneval.few_shot_examples import examples
 import os 
 from mutap.utils.mutpy_test_file_conversion import format_testcases
-from mutap.utils.mutpy_test_file_conversion import extract_func_name
+import re
 
 def augmentation_process(mutants_survived: int, put_code: str,
-                         initial_unit_test: list, mutants: list, task_id: str, run: int) -> list:
+                         initial_unit_test: list, mutants: list, functions: list[str], task_id: str, run: int) -> list:
 
     # Base initialization
     current_test_suite = initial_unit_test
@@ -17,17 +17,26 @@ def augmentation_process(mutants_survived: int, put_code: str,
 
     try:
         allowed_run = 0
-        while mutants_survived > 0 and len(surving_mutants) > 0 and allowed_run <= 10:
+        while mutants_survived > 0 and len(surving_mutants) > 0 and allowed_run < 10:
             allowed_run += 1
             mutant_code = ""
             mutant_dir = helper.getPath('mutants', task_id)
             mutant_file = os.path.join(mutant_dir, surving_mutants.pop())
             with open(mutant_file, 'r') as f:
                 mutant_code = f.read()
+            
+            function_str = ''
+            if len(functions) > 1:
+                mutated_function = extract_mutated_func_name(mutant_code).strip()
+                function_str = " for function: '" + mutated_function + "'"
+                mutant_code = '\n'.join(
+                    line for line in mutant_code.splitlines()
+                    if not line.strip().startswith('# mutated_function_in_mutpy:')
+                )
 
             # Augment prompt
             ins3 = "\n# FAULTY code:"
-            ins4 = """\n# generate NEW assert-based unit tests\n# test case:\n<test>\ndef test():\n    assert"""
+            ins4 = f"""\n# generate NEW assert-based unit tests{function_str}\n# test case:\n<test>\ndef test():\n    assert"""
             augmented_prompt = f"{ins3}\n<code>\n{mutant_code}\n</code>\n{ins4}"
             helper.writeReportLog('augmented_prompt.log', 'prompts', 'augmented prompts', augmented_prompt, task_id, allowed_run)
 
@@ -38,26 +47,26 @@ def augmentation_process(mutants_survived: int, put_code: str,
                 print(f"{task_id} aug_run {allowed_run}: unable to generate raw augmented test cases, skipping... check tmp logs for more details.")
                 continue
 
-            aug_unit_test = refine_test_cases(raw_aug_unit_test, put_code, task_id, allowed_run)
+            aug_unit_test = refine_test_cases(raw_aug_unit_test, put_code, functions, task_id, allowed_run)
             if not aug_unit_test:
                 print(f"{task_id} aug_run {allowed_run}: unable to generate augmented test cases, skipping... check tmp logs for more details.")
                 continue
-            aug_unit_test = current_test_suite + aug_unit_test[1:]
-            aug_unit_test = list(dict.fromkeys(aug_unit_test))
+            
+            aug_unit_test = list(dict.fromkeys(current_test_suite + aug_unit_test))
             helper.writeReportLog('refined_augmented_tests.log', 'testcases', 'refined augmented unit tests', "\n".join(aug_unit_test), task_id, allowed_run)
         
             test_file_path = format_testcases(
                 "\n".join(aug_unit_test),
                 task_id,
                 allowed_run,
-                extract_func_name(current_test_suite[1]).strip() if len(current_test_suite) > 1 else "TestFunction"
+                functions
             )
             if not test_file_path:
                 print(f"{task_id}: unable to format test cases for mutpy, skipping..., check tmp logs for more details.")
                 continue
 
             current_test_suite = aug_unit_test
-            mutation_result = run_mutation_testing(task_id, test_file_path, allowed_run)
+            mutation_result = run_mutation_testing(task_id, test_file_path, functions, allowed_run)
             if not mutation_result:
                 print(f"{task_id}: unable to generate mutants in augmentation, skipping..., check tmp logs for more details.")
                 continue
@@ -70,13 +79,13 @@ def augmentation_process(mutants_survived: int, put_code: str,
             print(f"\t survived: {mutants_survived} -> {mutants}")
             print(f"\t mutation_testing_time: {mutation_result['total_time']}")
             if mutants_survived <= 0:
-                print("\n\t( haha, gotcha charles! x_x )")
+                print("\n\t( haha, gotcha charles!... x_x )\n")
         
             surving_mutants = mutants
             
 
         if len(surving_mutants) > 0:
-            print("\n( Charles, you got away this time... -_- )")
+            print("\n( You got away this time, Charles... -_- )\n")
         
         return current_test_suite
     except Exception as e:
@@ -84,4 +93,12 @@ def augmentation_process(mutants_survived: int, put_code: str,
     return False
 
 
- 
+def extract_mutated_func_name(mutant_code: str) -> str:
+    try:
+        for line in mutant_code.splitlines():
+            match = re.search(r'#\s*mutated_function_in_mutpy:\s*\$(.*?)\$', line)
+            if match:
+                return match.group(1).strip()
+    except Exception as e:
+        helper.writeTmpLog(f"\n Error (augmentation): issue extracting mutated function name -> {e}", 'test_generation.log')
+    return ''

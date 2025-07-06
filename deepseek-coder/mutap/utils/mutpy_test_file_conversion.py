@@ -2,12 +2,12 @@ import ast
 import re
 import mutap.utils.helper as helper
 
-def format_testcases(code: str, id: str, run: int, function_name="has_close_elements") -> str:
+def format_testcases(code: str, id: str, run: int, function_name: list[str] = []) -> str:
     try:
         parsed = ast.parse(code)
         test_methods = []
 
-        for i, stmt in enumerate(parsed.body[0].body):
+        for i, stmt in enumerate(parsed.body):
             if isinstance(stmt, ast.Assert):
                 test_name = f"test_case_{i+1}"
              
@@ -21,7 +21,7 @@ def format_testcases(code: str, id: str, run: int, function_name="has_close_elem
 
         lines = [
             "import unittest",
-            f"from output.humaneval.formatted.{id}.function import {function_name}",
+            f"from output.humaneval.formatted.{id}.function import {', '.join(function_name)}",
             "",
             "class TestFunction(unittest.TestCase):",
             *test_methods,

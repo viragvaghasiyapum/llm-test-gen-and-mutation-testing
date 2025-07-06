@@ -4,17 +4,18 @@ import re
 import mutap.utils.helper as helper
     
 def prompt_deepseek_llmc(prompt, tag = "test") -> str:
+    
     output = ""
     try:
-        binary = helper.getPath('binary')
+        binary = helper.getPath('binary') 
         model = helper.getPath('model')
-        
+
         process = subprocess.Popen([
             binary, "-m", model, "-p", prompt,
             "--n-predict", "512", "--temp", "0.2",
-            "--top-p", "0.95", "--repeat-penalty", "1.1"
+            "--top-p", "0.95", "--repeat-penalty", "1.1", "-ngl", "25",
         ], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
-
+        
         full_output = process.stdout.read()
         helper.writeTmpLog(full_output, "deepseek_llmc.log")
         test_str = f"<{tag}>(.*?)</{tag}>"

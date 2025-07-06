@@ -4,8 +4,9 @@ import mutap.utils.helper as helper
 import re
 from bs4 import BeautifulSoup
 import yaml
+import ast
 
-def run_mutation_testing(task_id: str, test_path: str, run, isOracleRun=False):
+def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run, isOracleRun=False):
 
     put_path = helper.getPath('formatted_humaneval') + "/" + task_id + "/function.py"
     out_dir = helper.getPath('mutants', task_id)
@@ -32,7 +33,7 @@ def run_mutation_testing(task_id: str, test_path: str, run, isOracleRun=False):
                     log.write(f"{line}\n")
         
         mutant_files_path = os.path.join(out_dir, "mutants")
-        extract_mutant_code(mutant_files_path, out_dir)
+        extract_mutant_code(mutant_files_path, out_dir, functions)
 
         mutant_log_path = os.path.join(out_dir, f"report{run}.yaml")
         result = extract_mutation_summary(mutant_log_path)
@@ -94,33 +95,95 @@ def extract_mutation_summary(yaml_path):
         return False
 
 
-def extract_mutant_code(directory, output_dir):
+# def extract_mutant_code(directory, output_dir):
+#     try:
+#         for root, _, files in os.walk(directory):
+#             id = 0
+#             for file in files:
+#                 mutant_file = os.path.join(root, file)
+                
+#                 with open(mutant_file, 'r') as f:
+#                     soup = BeautifulSoup(f, 'html.parser')
+
+#                 heading = soup.find('h1')
+#                 id = None
+#                 if heading:
+#                     match = re.search(r'#(\d+)', heading.text)
+#                     if match:
+#                         id = int(match.group(1))
+
+#                 py_file = os.path.join(output_dir, f"mutant_{id}.py")
+#                 pre_tag = soup.find('pre', class_=lambda c: c and 'brush: python' in c)
+                
+#                 if not pre_tag:
+#                     return False
+
+#                 code = pre_tag.text.strip()
+
+#                 with open(py_file, 'w') as py_file:
+#                     py_file.write(code + '\n')
+#         return True
+#     except Exception as e:
+#         helper.writeTmpLog(f"\n Error (muatation_testing): issue extracting mutant code -> {e}", 'test_generation.log')
+#         return False
+    
+
+def get_function_name_at_line(code, line_no):
+    try:
+        tree = ast.parse(code)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                if hasattr(node, 'body') and node.body:
+                    start = node.lineno
+                    end = max(child.lineno for child in ast.walk(node) if hasattr(child, 'lineno'))
+                    if start <= line_no <= end:
+                        return node.name
+    except Exception as e:
+        helper.writeTmpLog(f"\n Error (muatation_testing): issue extracting function name at given line -> {e}", 'test_generation.log')
+    return ''
+
+def extract_mutant_code(directory, output_dir, functions):
     try:
         for root, _, files in os.walk(directory):
-            id = 0
             for file in files:
                 mutant_file = os.path.join(root, file)
-                
                 with open(mutant_file, 'r') as f:
                     soup = BeautifulSoup(f, 'html.parser')
 
+                # Extract mutation ID
                 heading = soup.find('h1')
-                id = None
+                mutant_id = None
                 if heading:
                     match = re.search(r'#(\d+)', heading.text)
                     if match:
-                        id = int(match.group(1))
+                        mutant_id = int(match.group(1))
 
-                py_file = os.path.join(output_dir, f"mutant_{id}.py")
+                # Extract mutated line number
+                mutation_details = soup.find_all('li')
+                mutation_line = None
+                for item in mutation_details:
+                    match = re.search(r'line (\d+)', item.text)
+                    if match:
+                        mutation_line = int(match.group(1))
+                        break
+
+                # Extract Python code
                 pre_tag = soup.find('pre', class_=lambda c: c and 'brush: python' in c)
-                
                 if not pre_tag:
-                    return False
+                    continue
 
                 code = pre_tag.text.strip()
 
-                with open(py_file, 'w') as py_file:
-                    py_file.write(code + '\n')
+                function_str = ""
+                if len(functions) > 1:
+                    function_name = get_function_name_at_line(code, mutation_line) if mutation_line else None
+                    function_str = f"# mutated_function_in_mutpy: ${function_name}$\n" if function_name not in ['', None] else ""
+
+                # Save extracted code
+                output_filename = f"mutant_{mutant_id or 'unknown'}.py"
+                py_file_path = os.path.join(output_dir, output_filename)
+                with open(py_file_path, 'w') as py_file:
+                    py_file.write(function_str + code + '\n')
         return True
     except Exception as e:
         helper.writeTmpLog(f"\n Error (muatation_testing): issue extracting mutant code -> {e}", 'test_generation.log')

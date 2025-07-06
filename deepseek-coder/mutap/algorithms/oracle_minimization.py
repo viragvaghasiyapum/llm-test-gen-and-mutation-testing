@@ -4,30 +4,29 @@ from mutap.utils import helper
 from mutap.utils.mutpy_test_file_conversion import format_testcases, extract_func_name
 import os
 
-#lower score doesnt necessarily mean better tests, but it is a good heuristic
+# lower score doesnt necessarily mean better tests, but it is a good heuristic
 # it should be based on which unique mutants it killed
 
-def minimize_oracles(id, test_cases: list) -> list:
+def minimize_oracles(id, functions: list[str], test_cases: list) -> list:
     try:
         test_processing = 1
         oracles = []
         tmp_test_cases = test_cases
-        for line in tmp_test_cases[1:]:
+        for line in tmp_test_cases:
 
-            tmp_content = "\n".join(test_cases[0:1] + [line])
             # TODO: give this a temp file name
             test_file_path = format_testcases(
-                tmp_content,
+                line,
                 id,
                 test_processing,
-                extract_func_name(line)
+                functions
             )
 
             if not test_file_path:
                 print(f"{id}: unable to format test cases for mutpy in orcale minimization, skipping..., check tmp logs for more details.")
                 continue
 
-            ms_report = run_mutation_testing(id, test_file_path, test_processing, isOracleRun=True)
+            ms_report = run_mutation_testing(id, test_file_path, functions, test_processing, isOracleRun=True)
             test_processing += 1
             if not ms_report:
                 print(f"{id}: unable to minimize oracle, skipping..., check tmp logs for more details.")
@@ -41,7 +40,7 @@ def minimize_oracles(id, test_cases: list) -> list:
         final_unit_tests = optimize_oracles(oracles)
         test_dir = helper.getPath('testcases', id)
         with open(os.path.join(test_dir, 'final_tests.py'), 'w') as f:
-            f.write("\n".join(test_cases[0:1] + final_unit_tests))
+            f.write("\n".join(final_unit_tests))
 
         return final_unit_tests
     except Exception as e:

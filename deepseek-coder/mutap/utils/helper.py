@@ -4,6 +4,7 @@ import os
 import datetime
 import shutil
 from typing import Union
+import ast 
 
 def save_checkpoint(name: str, label: str, content: str, task_id: str) -> Union[str, bool]:
     try:
@@ -38,7 +39,7 @@ def getPath(name, id=None):
         elif name == "model":
             path = os.path.join(base_dir, "model", "deepseek-coder-6.7b-base.Q4_K_M.gguf")
         elif name == "binary":
-            path = os.path.join(base_dir, "llama.cpp", "build", "bin", "llama-cli")
+            path = os.path.join(base_dir, "buildllama", "build", "bin", "llama-cli")
         elif name == "humaneval_src":
             path = os.path.join(base_dir, "data", "humaneval", "human-eval-v2-20210705.jsonl")
         elif name == "humaneval_converted_md":
@@ -132,3 +133,17 @@ def writeReportLog(file, dir, info, content: str, taskId, run) -> bool:
     except Exception as e:
         print(f"Error writing report log for {file}: {e}")
         return False
+    
+def extract_function_name(code: str) -> list[str]:
+    try:
+        parsed = ast.parse(code)
+    except SyntaxError as e:
+        print(f"Syntax error: {e}")
+        return []
+
+    function_names = []
+    for node in parsed.body:
+        if isinstance(node, ast.FunctionDef):
+            function_names.append(node.name)
+
+    return function_names
