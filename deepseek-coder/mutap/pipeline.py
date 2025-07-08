@@ -6,18 +6,23 @@ from mutap.algorithms.augmentation import augmentation_process
 from mutap.algorithms.oracle_minimization import minimize_oracles
 import mutap.utils.helper as helper
 from mutap.utils.loader import get_problems
-from data.humaneval.few_shot_examples import examples
 from mutap.utils.mutpy_test_file_conversion import format_testcases
 from mutap.utils.helper import extract_function_name
 import time
 import os
+from mutap.utils.helper import GCD
 
-def run_pipeline(limit: dict, mode="zero_shot"):
+def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
 
     try:
+        GCD.reset(full_reset=True)
         helper.cleanOldRunFiles(cleanTemp= True)
-        limit_type = limit['type'];
-        limit_value = limit['value'];
+        limit_type = limit['type']
+        limit_value = limit['value'] 
+        GCD.dataset = dataset.lower()
+        GCD.method = method
+        GCD.prompt = prompt_type
+        GCD.llm = llm
         problems = []
         if limit_type == 'specific':
             problems = get_problems(target= limit_value)
@@ -26,12 +31,15 @@ def run_pipeline(limit: dict, mode="zero_shot"):
             problems = probs[:limit_value] if limit_type == 'tot' else probs
             probs = None;
 
-        print(f"Running {len(problems)} tasks with {mode} mode...")
+        print(f"Running {len(problems)} tasks with {prompt_type} prompt_type...")
 
         for idx, problem in enumerate(problems): 
             
+            GCD.reset()
             initial_test_run = -1
             task_id = problem['task_id']
+            GCD.task_id = task_id
+            GCD.run = 1
             put_code = problem['code']
             run = 0
 
@@ -42,7 +50,7 @@ def run_pipeline(limit: dict, mode="zero_shot"):
             print(f"{task_id}: buidling initial prompt")
 
             # Promt Generation
-            initial_prompt = build_prompts(put_code, examples, type=mode)
+            initial_prompt = build_prompts(put_code)
             helper.writeReportLog('initial_prompt.log', 'prompts', 'initial prompt', initial_prompt, task_id, run)
 
             putcode_functions = extract_function_name(put_code)
@@ -50,6 +58,7 @@ def run_pipeline(limit: dict, mode="zero_shot"):
             while initial_test_run < 10:
                 
                 initial_test_run += 1
+                
                 print(f"{task_id} -> subrun {initial_test_run}: generating raw test cases")
 
                 # Raw Testcase Generation
@@ -67,11 +76,13 @@ def run_pipeline(limit: dict, mode="zero_shot"):
                 else:
                     helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', "\n".join(initial_unit_test), task_id, initial_test_run)
                     break
-                
+            
             if initial_unit_test == False:
                 print(f"{task_id}: unable to generate initial test cases after {initial_test_run} attempts, skipping..., check tmp logs for more details.")
                 continue
-        
+            
+            GCD.refined_tests = len(initial_unit_test)
+
             # Format Testcase for Mutpy
             test_file_path = format_testcases(
                 "\n".join(initial_unit_test),
@@ -112,6 +123,7 @@ def run_pipeline(limit: dict, mode="zero_shot"):
                 augmented_unit_test = augmentation_process(
                     mutants_survived,
                     put_code,
+                    initial_prompt,
                     initial_unit_test,
                     mutants,
                     putcode_functions,
@@ -129,47 +141,13 @@ def run_pipeline(limit: dict, mode="zero_shot"):
             
             print("Final Tests for", task_id)
             print(final_unit_tests)
+            helper.create_csv_from_data()
             print("--------------------------------------------------------------------")
-            time.sleep(10)  # Sleep to avoid overwhelming the output
+            time.sleep(10)  # Sleep to avoid overwhelming the system
+            
+
     except Exception as e:
         print('Error running pipeline:', e)
-
-def init_env_vars():
-    
-    os.environ['task_id'] = None
-    os.environ['dataset'] = None
-    os.environ['method'] = None
-    os.environ['prompt'] = None
-    os.environ['run'] = None
-    os.environ['mutation_score'] = None
-    os.environ['mutant_info'] = {
-        'mutant_types': [],
-        'survived': {
-            'total': 0,
-            'type': []
-        },
-        'killed': {
-            'total': 0,
-            'type': []
-        },
-        'timeout': {
-            'total': 0,
-            'type': []
-        }
-    }
-    os.environ['testcases'] = {
-        'total_generated': 0,
-        'duplicates_generated': 0,
-        'syntax_fix': {
-            'syntax_errored': 0,
-            'fixed_by_model': 0,
-            'fixed_by_ommiting': 0,
-            'ibf_assertion_errored': 0,
-            'ibf_repaired': 0,
-            'ibf_unrepaired': 0
-        },
-    }
-
 
     
     

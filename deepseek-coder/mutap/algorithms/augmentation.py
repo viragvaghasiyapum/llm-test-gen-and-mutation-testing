@@ -1,13 +1,15 @@
 from mutap.algorithms.test_generation import prompt_deepseek_llmc
 from mutap.algorithms.refinement import refine_test_cases
 from mutap.algorithms.mutation_testing import run_mutation_testing
+from mutap.algorithms.prompting import build_prompts
 import mutap.utils.helper as helper
 from data.humaneval.few_shot_examples import examples
 import os 
 from mutap.utils.mutpy_test_file_conversion import format_testcases
 import re
+from mutap.utils.helper import GCD
 
-def augmentation_process(mutants_survived: int, put_code: str,
+def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: str,
                          initial_unit_test: list, mutants: list, functions: list[str], task_id: str, run: int) -> list:
 
     # Base initialization
@@ -19,6 +21,7 @@ def augmentation_process(mutants_survived: int, put_code: str,
         allowed_run = 0
         while mutants_survived > 0 and len(surving_mutants) > 0 and allowed_run < 10:
             allowed_run += 1
+            GCD.run += 1
             mutant_code = ""
             mutant_dir = helper.getPath('mutants', task_id)
             mutant_file = os.path.join(mutant_dir, surving_mutants.pop())
@@ -35,14 +38,12 @@ def augmentation_process(mutants_survived: int, put_code: str,
                 )
 
             # Augment prompt
-            ins3 = "\n# FAULTY code:"
-            ins4 = f"""\n# generate NEW assert-based unit tests{function_str}\n# test case:\n<test>\ndef test():\n    assert"""
-            augmented_prompt = f"{ins3}\n<code>\n{mutant_code}\n</code>\n{ins4}"
+            augmented_prompt = build_prompts(mutant_code, 'augmentation_prompt', function_str, initial_prompt=initial_prompt, unit_tests=current_test_suite)
             helper.writeReportLog('augmented_prompt.log', 'prompts', 'augmented prompts', augmented_prompt, task_id, allowed_run)
 
             raw_aug_unit_test = prompt_deepseek_llmc(augmented_prompt)
             helper.writeReportLog('raw_augmented_tests.log', 'testcases', 'raw augmented unit tests', raw_aug_unit_test, task_id, allowed_run)
-            
+
             if not raw_aug_unit_test:
                 print(f"{task_id} aug_run {allowed_run}: unable to generate raw augmented test cases, skipping... check tmp logs for more details.")
                 continue
@@ -51,8 +52,11 @@ def augmentation_process(mutants_survived: int, put_code: str,
             if not aug_unit_test:
                 print(f"{task_id} aug_run {allowed_run}: unable to generate augmented test cases, skipping... check tmp logs for more details.")
                 continue
-            
+
+            GCD.refined_tests += len(aug_unit_test)
+            GCD.duplicate_tests_removed += len(list(set(current_test_suite) & set(aug_unit_test)))
             aug_unit_test = list(dict.fromkeys(current_test_suite + aug_unit_test))
+            
             helper.writeReportLog('refined_augmented_tests.log', 'testcases', 'refined augmented unit tests', "\n".join(aug_unit_test), task_id, allowed_run)
         
             test_file_path = format_testcases(
@@ -66,7 +70,8 @@ def augmentation_process(mutants_survived: int, put_code: str,
                 continue
 
             current_test_suite = aug_unit_test
-            mutation_result = run_mutation_testing(task_id, test_file_path, functions, allowed_run)
+            final_run = True if allowed_run == 10 else False
+            mutation_result = run_mutation_testing(task_id, test_file_path, functions, allowed_run, final_run=final_run)
             if not mutation_result:
                 print(f"{task_id}: unable to generate mutants in augmentation, skipping..., check tmp logs for more details.")
                 continue

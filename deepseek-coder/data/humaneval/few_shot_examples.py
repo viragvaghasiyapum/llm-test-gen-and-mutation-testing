@@ -1,10 +1,10 @@
 examples = [
     {
-        "code": "from typing import List\ndef triangle(x: int, y: int, z: int) -> str:\n    if x == y == z:\n        return \"Equilateral triangle\"\n    elif x == y or y == z or x == z:\n        return \"Isosceles triangle\"\n    else:\n        return \"Scalene triangle\"",
-        "test": "def test():\n    assert triangle(2, 2, 2) == \"Equilateral triangle\"\n    assert triangle(2, 2, 3) == \"Isosceles triangle\""
+        "code": """from typing import List\ndef triangle(x: int, y: int, z: int) -> str:\n    if x == y == z:\n        return \"Equilateral triangle\"\n    elif x == y or y == z or x == z:\n        return \"Isosceles triangle\"\n    else:\n        return \"Scalene triangle\"""",
+        "test": """def test():\n    assert triangle(2, 2, 2) == \"Equilateral triangle\"\n    assert triangle(2, 2, 3) == \"Isosceles triangle\"\n    assert triangle(2, 3, 4) == \"Scalene triangle\""""
     },
     {
-        "code": "from typing import List\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    for idx, elem in enumerate(numbers):\n        for idx2, elem2 in enumerate(numbers):\n            if idx != idx2:\n                distance = abs(elem - elem2)\n                if distance < threshold:\n                    return True\n    return False",
-        "test": "def test():\n    assert has_close_elements([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True\n    assert has_close_elements([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False"
+        "code": """from typing import List\n\ndef rescale_to_unit(numbers: List[float]) -> List[float]:\n    min_number = min(numbers)\n    max_number = max(numbers)\n    return [(x - min_number) / (max_number - min_number) for x in numbers]""",
+        "test": """def test():\n    assert rescale_to_unit([2.0, 49.9]) == [0.0, 1.0]\n    assert rescale_to_unit([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]"""
     },
 ]

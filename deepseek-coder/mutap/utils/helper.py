@@ -5,6 +5,9 @@ import datetime
 import shutil
 from typing import Union
 import ast 
+import csv
+from collections import defaultdict
+import json
 
 def save_checkpoint(name: str, label: str, content: str, task_id: str) -> Union[str, bool]:
     try:
@@ -147,3 +150,77 @@ def extract_function_name(code: str) -> list[str]:
             function_names.append(node.name)
 
     return function_names
+
+# Global Class to hold data for the pipeline for each task (Global Class Data)
+class GCD:
+    # run info
+    task_id = dataset = method = prompt = llm = ''
+    run = 0
+
+    # mutation info
+    mutation_score = 0.0
+    total_mutants = survived_total = killed_total = timeout_total = 0
+    mutation_types, survived_types, killed_types, timeout_types = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
+    
+    # testcases info
+    raw_tests_generated = refined_tests = duplicate_tests_removed = 0
+    syntax_errored = fixed_by_model = fixed_by_ommiting = 0
+    ibf_assertion_errored = ibf_repaired = ibf_unrepaired = 0
+    
+    @classmethod
+    def reset(cls, full_reset= False):
+        
+        if full_reset:
+            # run info
+            cls.task_id = cls.dataset = cls.method = cls.prompt = cls.llm = ''
+        
+        cls.run = 0
+        # mutation info
+        cls.mutation_score = 0.0
+        cls.total_mutants = cls.survived_total = cls.killed_total = cls.timeout_total = 0
+        cls.mutation_types, cls.survived_types, cls.killed_types, cls.timeout_types = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
+        # testcases info
+        cls.raw_tests_generated = cls.refined_tests = cls.duplicate_tests_removed = 0
+        cls.syntax_errored = cls.fixed_by_model = cls.fixed_by_ommiting = cls.ibf_assertion_errored = cls.ibf_repaired = cls.ibf_unrepaired = 0
+
+
+def create_csv_from_data():
+    header = ['task_id', 'dataset', 'method', 'prompt', 'llm', 'run', 'mutation_score', 'mutation_types', 'total_mutants', 'survived_total', 'survived_types', 'killed_total', 'killed_types', 'timeout_total', 'timeout_types', 'raw_tests_generated', 'refined_tests' ,'duplicate_tests_removed', 'syntax_errored', 'fixed_by_model', 'fixed_by_ommiting', 'ibf_assertion_errored', 'ibf_repaired', 'ibf_unrepaired']
+
+    # Row data
+    row = {
+        'task_id': GCD.task_id,
+        'dataset': GCD.dataset,
+        'method' : GCD.method,
+        'prompt' : GCD.prompt,
+        'llm'    : GCD.llm,
+        'run'    : GCD.run,
+
+        'mutation_score': GCD.mutation_score,
+        'total_mutants' : GCD.total_mutants,
+        'survived_total': GCD.survived_total,
+        'killed_total'  : GCD.killed_total,
+        'timeout_total' : GCD.timeout_total,
+
+        'mutation_types': json.dumps(GCD.mutation_types),
+        'survived_types': json.dumps(GCD.survived_types),
+        'killed_types'  : json.dumps(GCD.killed_types),
+        'timeout_types' : json.dumps(GCD.timeout_types),
+
+        'raw_tests_generated'    : GCD.raw_tests_generated,
+        'refined_tests'          : GCD.refined_tests,
+        'duplicate_tests_removed': GCD.duplicate_tests_removed,
+        'syntax_errored'         : GCD.syntax_errored,
+        'fixed_by_model'         : GCD.fixed_by_model,
+        'fixed_by_ommiting'      : GCD.fixed_by_ommiting,
+        'ibf_assertion_errored'  : GCD.ibf_assertion_errored,
+        'ibf_repaired'           : GCD.ibf_repaired,
+        'ibf_unrepaired'         : GCD.ibf_unrepaired,
+    }
+    output_path = os.path.join(getRootDir(), "output", "humaneval", f"{GCD.prompt}_{GCD.dataset}_{GCD.llm}.csv")
+    write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
+    with open(output_path, 'a', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=header)
+        if write_header:
+            writer.writeheader()
+        writer.writerow(row)

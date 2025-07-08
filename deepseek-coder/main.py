@@ -1,5 +1,4 @@
 from mutap.pipeline import run_pipeline
-# from mutap.pynguin_runner import run_pynguin_pipeline  # Assuming a Pynguin runner wrapper exists
 
 def main():
     while True:
@@ -72,7 +71,7 @@ def main():
             # run_pynguin_pipeline(limit=limit)
             print ("\n Under construction, please use the other methods for now.")
         else:
-            run_pipeline(limit=limit, mode=prompt_mode)# llm=llm, method=method)
+            run_pipeline(limit, prompt_mode, llm, method, dataset)
 
         again = input("\n\nRun another test? (y/n): ").strip().lower()
         if again != 'y':

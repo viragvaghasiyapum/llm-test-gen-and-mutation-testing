@@ -5,8 +5,9 @@ import re
 from bs4 import BeautifulSoup
 import yaml
 import ast
+from mutap.utils.helper import GCD
 
-def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run, isOracleRun=False):
+def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run, isOracleRun=False, final_run=False):
 
     put_path = helper.getPath('formatted_humaneval') + "/" + task_id + "/function.py"
     out_dir = helper.getPath('mutants', task_id)
@@ -36,7 +37,7 @@ def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run
         extract_mutant_code(mutant_files_path, out_dir, functions)
 
         mutant_log_path = os.path.join(out_dir, f"report{run}.yaml")
-        result = extract_mutation_summary(mutant_log_path)
+        result = extract_mutation_summary(mutant_log_path, final_run, isOracleRun)
         
         # Clean up temporary files
         cleanup(files = [
@@ -64,7 +65,7 @@ def unknown_tag_handler(loader, tag_suffix, node):
 
 IgnoreUnknownTagsLoader.add_multi_constructor('tag:', unknown_tag_handler)
 
-def extract_mutation_summary(yaml_path):
+def extract_mutation_summary(yaml_path, is_final_run=False, oracle_run=False):
     try:
         with open(yaml_path, 'r') as f:
             data = yaml.load(f, Loader=IgnoreUnknownTagsLoader)
@@ -72,17 +73,39 @@ def extract_mutation_summary(yaml_path):
         mutation_score = data.get('mutation_score', 0.0)
         total_time = data.get('total_time', 0.0)
 
-        survived = []
+        survived, killed, timedout = [], [], []
         all_mutations = data.get('mutations', [])
         total_mutants = len(all_mutations)
-        killed = []
 
         for m in all_mutations:
-            if m.get('status') == 'survived':
-                survived.append(f"mutant_{m.get('number')}.py")
-            if m.get('status') == 'killed':
-                killed.append(m["number"])
+            status = m.get('status')
+            file_str = f"mutant_{m.get('number')}.py"
+            if status == 'survived':
+                survived.append(file_str)
+            if status == 'killed':
+                killed.append(file_str)
+            if status == 'timeout':
+                timedout.append(file_str)
 
+            # final run csv data collection
+            if (is_final_run or mutation_score >= 100) and not oracle_run:
+                op = m.get('mutations', [{}])[0].get('operator')
+                if op is not None:
+                    GCD.mutation_types[op] += 1
+                    if status == 'survived':
+                        GCD.survived_types[op] += 1
+                    if status == 'killed':
+                        GCD.killed_types[op] += 1
+                    if status == 'timeout':
+                        GCD.timeout_types[op] += 1
+
+        if (is_final_run or mutation_score >= 100) and not oracle_run:
+            GCD.mutation_score = mutation_score
+            GCD.survived_total = len(survived)
+            GCD.killed_total = len(killed)
+            GCD.timeout_total = len(timedout)
+            GCD.total_mutants = total_mutants
+            
         return {
             "mutation_score": mutation_score,
             "survived": {'total': len(survived), 'mutants': survived},
@@ -92,41 +115,7 @@ def extract_mutation_summary(yaml_path):
         }
     except Exception as e:
         helper.writeTmpLog(f"\n Error (muatation_testing): issue extracting summary -> {e}", 'test_generation.log')
-        return False
-
-
-# def extract_mutant_code(directory, output_dir):
-#     try:
-#         for root, _, files in os.walk(directory):
-#             id = 0
-#             for file in files:
-#                 mutant_file = os.path.join(root, file)
-                
-#                 with open(mutant_file, 'r') as f:
-#                     soup = BeautifulSoup(f, 'html.parser')
-
-#                 heading = soup.find('h1')
-#                 id = None
-#                 if heading:
-#                     match = re.search(r'#(\d+)', heading.text)
-#                     if match:
-#                         id = int(match.group(1))
-
-#                 py_file = os.path.join(output_dir, f"mutant_{id}.py")
-#                 pre_tag = soup.find('pre', class_=lambda c: c and 'brush: python' in c)
-                
-#                 if not pre_tag:
-#                     return False
-
-#                 code = pre_tag.text.strip()
-
-#                 with open(py_file, 'w') as py_file:
-#                     py_file.write(code + '\n')
-#         return True
-#     except Exception as e:
-#         helper.writeTmpLog(f"\n Error (muatation_testing): issue extracting mutant code -> {e}", 'test_generation.log')
-#         return False
-    
+        return False  
 
 def get_function_name_at_line(code, line_no):
     try:
