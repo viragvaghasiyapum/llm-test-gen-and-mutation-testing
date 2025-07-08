@@ -24,7 +24,6 @@ def prompt_deepseek_llmc(prompt, is_fix_prompt= False, tag = "test") -> str:
         match = re.search(test_str, full_output, re.DOTALL)
         if match:
             raw_output = match.group(1).strip()
-            # print(f"Raw output from deepseek_llmc: {raw_output}")
             output = clean_test_output(raw_output, is_fix_prompt)
 
     except Exception as e:
@@ -102,5 +101,5 @@ def clean_test_output(raw_test_code: str, is_fix_prompt) -> str:
         else:
             return ""
     except Exception as e:
-        helper.writeTmpLog("\nError (test_generation): issue cleaning tests -> {e}.", 'test_generation.log')
+        helper.writeTmpLog(f"\nError (test_generation): issue cleaning tests -> {e}.", 'test_generation.log')
     return ""

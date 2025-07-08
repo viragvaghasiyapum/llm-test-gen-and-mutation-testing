@@ -19,15 +19,15 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
         helper.cleanOldRunFiles(cleanTemp= True)
         limit_type = limit['type']
         limit_value = limit['value'] 
-        GCD.dataset = dataset.lower()
+        GCD.dataset = dataset
         GCD.method = method
         GCD.prompt = prompt_type
         GCD.llm = llm
         problems = []
         if limit_type == 'specific':
-            problems = get_problems(target= limit_value)
+            problems = get_problems(dataset, target= limit_value)
         else:
-            probs = get_problems()
+            probs = get_problems(dataset)
             problems = probs[:limit_value] if limit_type == 'tot' else probs
             probs = None;
 

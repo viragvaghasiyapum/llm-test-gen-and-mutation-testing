@@ -39,8 +39,10 @@ def syntax_check(test: str, function_names: List[str], llm_fixed, error_line= No
             del lines[error_line - 1]
             ommited = 1
             code = "\n".join(lines)
-        if ast.parse(code):
-            asserts = [line.strip() for line in lines if line.strip().startswith("assert") and any(fn in line for fn in function_names)]
+        tree = ast.parse(code)
+        if tree:
+            cleaned_code = ast.unparse(tree).splitlines()
+            asserts = [line.strip() for line in cleaned_code if line.strip().startswith("assert") and any(fn in line for fn in function_names)]
             result = asserts if asserts else False
         
     except SyntaxError as e:

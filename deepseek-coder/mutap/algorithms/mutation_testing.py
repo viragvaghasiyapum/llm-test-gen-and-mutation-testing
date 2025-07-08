@@ -9,7 +9,10 @@ from mutap.utils.helper import GCD
 
 def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run, isOracleRun=False, final_run=False):
 
-    put_path = helper.getPath('formatted_humaneval') + "/" + task_id + "/function.py"
+    if (GCD.dataset == 'refactory'):
+        put_path = helper.getPath('refactory_formatted_data_path') + "/" + task_id + "/reference.py"
+    else:
+        put_path = helper.getPath('humaneval_formatted_data_path') + "/" + task_id + "/function.py"
     out_dir = helper.getPath('mutants', task_id)
     report_dir = helper.getPath('reports', task_id)
     oracle_report_dir = helper.getPath('oracle_run', task_id)

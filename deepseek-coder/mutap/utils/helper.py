@@ -28,28 +28,38 @@ def getPath(name, id=None):
 
         check = False
         path = None
+        dataset = GCD.dataset
         if name in {"mutants", "testcases", "prompts", "mutpy_formatted_tests"}:
             if not id:
                 raise ValueError(f"ID is required for path type '{name}'")
-            path = os.path.join(base_dir, "output", "humaneval", "formatted", id, name)
+            path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, name)
             check = True
         elif name == "reports":
-            path = os.path.join(base_dir, "output", "humaneval", "formatted", id, "mutants", "reports")
+            path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, "mutants", "reports")
             check = True
         elif name == "oracle_run":
-            path = os.path.join(base_dir, "output", "humaneval", "formatted", id, "mutants", "reports", "oracle_run")
+            path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, "mutants", "reports", "oracle_run")
             check = True
         elif name == "model":
-            path = os.path.join(base_dir, "model", "deepseek-coder-6.7b-base.Q4_K_M.gguf")
+            if GCD.llm == "llama2chat":
+                return os.path.join(base_dir, "model", "llama-2-7b-chat.Q4_K_M.gguf")
+            else: 
+                return os.path.join(base_dir, "model", "deepseek-coder-6.7b-base.Q4_K_M.gguf")
         elif name == "binary":
             path = os.path.join(base_dir, "buildllama", "build", "bin", "llama-cli")
+        elif name == "analysis_report_path":
+            path = os.path.join(base_dir, "output", f"{dataset}", "analysis_reports")
+            check = True
         elif name == "humaneval_src":
             path = os.path.join(base_dir, "data", "humaneval", "human-eval-v2-20210705.jsonl")
+        elif name == "refactory_src":
+            path = os.path.join(base_dir, "data", "refactory")
         elif name == "humaneval_converted_md":
             path = os.path.join(base_dir, "data", "humaneval", "human_eval_full.md")
-        elif name == "humaneval_extraction_output" or name == "formatted_humaneval":
+        elif name == "humaneval_formatted_data_path":
             path = os.path.join(base_dir, "output", "humaneval", "formatted")
-            check = True
+        elif name == "refactory_formatted_data_path":
+            path = os.path.join(base_dir, "output", "refactory", "formatted")
         elif name == "tmp":
             path = os.path.join(base_dir, "tmp")
             check = True
@@ -96,6 +106,7 @@ def writeTmpLog(content: str, name: str) -> bool:
 
 def cleanOldRunFiles(id= None, cleanTemp= False):
     try:
+        dataset = GCD.dataset
         if cleanTemp:
             dirs = [getPath('tmp')]
         else:
@@ -217,7 +228,8 @@ def create_csv_from_data():
         'ibf_repaired'           : GCD.ibf_repaired,
         'ibf_unrepaired'         : GCD.ibf_unrepaired,
     }
-    output_path = os.path.join(getRootDir(), "output", "humaneval", f"{GCD.prompt}_{GCD.dataset}_{GCD.llm}.csv")
+
+    output_path = os.path.join(getPath('analysis_report_path'), f"{GCD.prompt}_{GCD.dataset}_{GCD.llm}.csv")
     write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
     with open(output_path, 'a', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=header)

@@ -1,4 +1,5 @@
-from data.humaneval.few_shot_examples import examples
+from data.humaneval.few_shot_examples import humaneval_examples
+from data.refactory.few_shot_examples import refactory_examples
 from mutap.utils.helper import GCD
 
 def build_prompts(put_code, step= 'initial_prompt', function_str=None, initial_prompt='', unit_tests=''):
@@ -7,8 +8,9 @@ def build_prompts(put_code, step= 'initial_prompt', function_str=None, initial_p
     dataset = GCD.dataset
     type = GCD.prompt
 
+    examples = humaneval_examples if dataset == 'humaneval' else refactory_examples
 
-    if dataset == 'humaneval':
+    if llm  == 'deepseek-coder':
         if step == 'syntax_fix_prompt':
                 ins_fix = "# Fix the syntax errors in the following assert-based code snippet"
                 return f"{ins_fix}\n<code>\n{put_code}\n</code>\n\n<fixed>    \n"

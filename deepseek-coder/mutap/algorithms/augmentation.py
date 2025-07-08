@@ -3,7 +3,6 @@ from mutap.algorithms.refinement import refine_test_cases
 from mutap.algorithms.mutation_testing import run_mutation_testing
 from mutap.algorithms.prompting import build_prompts
 import mutap.utils.helper as helper
-from data.humaneval.few_shot_examples import examples
 import os 
 from mutap.utils.mutpy_test_file_conversion import format_testcases
 import re
@@ -24,7 +23,9 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
             GCD.run += 1
             mutant_code = ""
             mutant_dir = helper.getPath('mutants', task_id)
-            mutant_file = os.path.join(mutant_dir, surving_mutants.pop())
+            current_mutant = surving_mutants[-1]  # Get the last mutant in the list
+            surving_mutants = surving_mutants[1:] + surving_mutants[:1] # circular left shift in case of errorsome mutant
+            mutant_file = os.path.join(mutant_dir, current_mutant)
             with open(mutant_file, 'r') as f:
                 mutant_code = f.read()
             
@@ -45,7 +46,7 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
             helper.writeReportLog('raw_augmented_tests.log', 'testcases', 'raw augmented unit tests', raw_aug_unit_test, task_id, allowed_run)
 
             if not raw_aug_unit_test:
-                print(f"{task_id} aug_run {allowed_run}: unable to generate raw augmented test cases, skipping... check tmp logs for more details.")
+                print(f"\n{task_id} aug_run {allowed_run}: unable to generate raw augmented test cases, skipping... check tmp logs for more details.")
                 continue
 
             aug_unit_test = refine_test_cases(raw_aug_unit_test, put_code, functions, task_id, allowed_run)

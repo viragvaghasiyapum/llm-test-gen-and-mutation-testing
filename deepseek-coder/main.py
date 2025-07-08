@@ -1,4 +1,6 @@
 from mutap.pipeline import run_pipeline
+from scripts.dataset_formatter import process_humaneval, process_refactory
+import mutap.utils.helper as helper
 
 def main():
     while True:
@@ -35,7 +37,7 @@ def main():
         print("2. Deepseek-Coder-7b-Q4-KM.gguf")
         llm_choice = input("✅ Enter LLM [1/2]: ").strip()
 
-        llm = "llama2chat" if llm_choice == '1' else "deepseek_coder" if llm_choice == '2' else None
+        llm = "llama2chat" if llm_choice == '1' else "deepseek-coder" if llm_choice == '2' else None
         if llm is None:
             print("❌ Invalid LLM choice. Try again.")
             continue
@@ -117,5 +119,12 @@ def get_task_limit(dataset):
         else:
             print("❌ Invalid selection. Enter 1, 2, or 3.")
 
+
+def check_formatted_data_src_setup():
+    process_humaneval(helper.getPath("humaneval_src"), helper.getPath("humaneval_formatted_data_path"))
+    process_refactory(helper.getPath("refactory_src"), helper.getPath("refactory_formatted_data_path"))
+
+
 if __name__ == '__main__':
+    check_formatted_data_src_setup()
     main()

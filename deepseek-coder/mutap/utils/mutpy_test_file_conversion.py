@@ -1,6 +1,7 @@
 import ast
 import re
 import mutap.utils.helper as helper
+from mutap.utils.helper import GCD
 
 def format_testcases(code: str, id: str, run: int, function_name: list[str] = []) -> str:
     try:
@@ -21,7 +22,7 @@ def format_testcases(code: str, id: str, run: int, function_name: list[str] = []
 
         lines = [
             "import unittest",
-            f"from output.humaneval.formatted.{id}.function import {', '.join(function_name)}",
+            f"from output.{GCD.dataset}.formatted.{id}.{'function' if GCD.dataset == 'humaneval' else 'reference'} import {', '.join(function_name)}",
             "",
             "class TestFunction(unittest.TestCase):",
             *test_methods,
