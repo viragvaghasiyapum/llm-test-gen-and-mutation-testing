@@ -37,6 +37,14 @@ def getPath(name, id=None):
         elif name == "reports":
             path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, "mutants", "reports")
             check = True
+        elif name == "mutpy_oracle_formatted_tests":
+            path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, "mutpy_formatted_tests", "oracle_run")
+            check = True
+        elif name == "refactory_buggy_dir":
+            path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, "wrong")
+        elif name == "buggy_unittests_run":
+            path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, name)
+            check = True
         elif name == "oracle_run":
             path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, "mutants", "reports", "oracle_run")
             check = True
@@ -116,6 +124,8 @@ def cleanOldRunFiles(id= None, cleanTemp= False):
                 getPath('mutants', id),
                 getPath('testcases', id)
             ]
+            if dataset == 'refactory':
+                dirs.append(getPath('buggy_unittests_run', id))
         for path in dirs:
             shutil.rmtree(path)
             print(f"Cleaned old runs files from path: {path}..")
@@ -195,7 +205,7 @@ class GCD:
         cls.syntax_errored = cls.fixed_by_model = cls.fixed_by_ommiting = cls.ibf_assertion_errored = cls.ibf_repaired = cls.ibf_unrepaired = 0
 
 
-def create_csv_from_data():
+def write_mutap_analysis():
     header = ['task_id', 'dataset', 'method', 'prompt', 'llm', 'run', 'mutation_score', 'mutation_types', 'total_mutants', 'survived_total', 'survived_types', 'killed_total', 'killed_types', 'timeout_total', 'timeout_types', 'raw_tests_generated', 'refined_tests' ,'duplicate_tests_removed', 'syntax_errored', 'fixed_by_model', 'fixed_by_ommiting', 'ibf_assertion_errored', 'ibf_repaired', 'ibf_unrepaired']
 
     # Row data
@@ -234,5 +244,19 @@ def create_csv_from_data():
     with open(output_path, 'a', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=header)
         if write_header:
+            write_header = False
             writer.writeheader()
         writer.writerow(row)
+
+def write_buggy_code_run_analysis(data: list[dict]):
+    
+    header = ['task_id', 'dataset', 'total_buggy_codes', 'killed', 'survived', 'total_testcases']
+    output_path = os.path.join(getPath('analysis_report_path'), f"{GCD.prompt}_{GCD.dataset}_buggy_code_run.csv")
+    write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
+    with open(output_path, 'a', newline='') as f:
+        for row in data:
+            writer = csv.DictWriter(f, fieldnames=header)
+            if write_header:
+                write_header = False
+                writer.writeheader()
+            writer.writerow(row)

@@ -1,7 +1,6 @@
 # mutap/algorithms/refinement.py
 import ast
 from mutap.utils.helper import writeTmpLog
-from mutap.utils.helper import extract_function_name 
 from typing import List, Union
 import mutap.algorithms.test_generation as test_gen
 from mutap.algorithms.prompting import build_prompts
@@ -13,7 +12,7 @@ def syntax_fix(test: str, functions: list[str]) -> str:
         fixed_test = test
         if not ast.parse(test):
             prompt = build_prompts(test, step='syntax_fix_prompt')
-            fixed_test = test_gen.prompt_deepseek_llmc(prompt, is_fix_prompt=True, tag="fixed")
+            fixed_test = test_gen.prompt_deepseek_llmc(prompt, functions=functions, is_fix_prompt=True, tag='fixed')
             fixed_test = fixed_test.strip().splitlines()
             fixed_test = '\n'.join(fixed_test);
             llm_fixed = 1
@@ -58,6 +57,7 @@ def syntax_check(test: str, function_names: List[str], llm_fixed, error_line= No
 def intended_behavior_fix(tests: list, put_code: str) -> list:
     try:
         fixed = []
+        only_lhs_fixed = []
         errored = False
         for line in tests:
             try:
@@ -71,6 +71,7 @@ def intended_behavior_fix(tests: list, put_code: str) -> list:
                 actual = local_env.get("result")
                 fixed.append(f"assert {expr_lhs} == {repr(actual)}")
                 generated = eval(expr_rhs, local_env)
+                only_lhs_fixed.append(f"assert {expr_lhs} == {repr(generated)}")
                 if not generated == actual:
                     errored = True
                     GCD.ibf_repaired += 1
@@ -83,9 +84,10 @@ def intended_behavior_fix(tests: list, put_code: str) -> list:
             GCD.ibf_assertion_errored += 1
     except Exception as e:
         fixed = False
+        only_lhs_fixed = False
         writeTmpLog(f"\nError (refinement): issue fixing intended behaviour -> {e}.", 'test_generation.log')
 
-    return fixed
+    return fixed, only_lhs_fixed
 
 def refine_test_cases(raw_tests: str, put_code: str, functions: list[str], task_id, run) -> list:
     try:

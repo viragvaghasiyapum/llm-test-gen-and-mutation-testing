@@ -19,7 +19,8 @@ def minimize_oracles(id, functions: list[str], test_cases: list) -> list:
                 line,
                 id,
                 test_processing,
-                functions
+                functions,
+                is_oracle_run=True
             )
 
             if not test_file_path:

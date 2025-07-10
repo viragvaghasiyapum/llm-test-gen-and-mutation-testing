@@ -9,8 +9,8 @@ from mutap.utils.loader import get_problems
 from mutap.utils.mutpy_test_file_conversion import format_testcases
 from mutap.utils.helper import extract_function_name
 import time
-import os
 from mutap.utils.helper import GCD
+from mutap.algorithms.unittest_script import refactory_test_buggy_versions
 
 def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
 
@@ -54,28 +54,32 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
             helper.writeReportLog('initial_prompt.log', 'prompts', 'initial prompt', initial_prompt, task_id, run)
 
             putcode_functions = extract_function_name(put_code)
-            initial_unit_test = False
+            initial_unit_test = lhs_fixed_initial_unit_test = False
+
             while initial_test_run < 10:
                 
                 initial_test_run += 1
                 
                 print(f"{task_id} -> subrun {initial_test_run}: generating raw test cases")
 
+                # tag = 'test' if llm == 'deepseek-coder' else 'test_gen'
                 # Raw Testcase Generation
-                raw_initial_unit_test = prompt_deepseek_llmc(initial_prompt)
+                raw_initial_unit_test = prompt_deepseek_llmc(initial_prompt, putcode_functions)
                 helper.writeReportLog('initial_raw_tests.log', 'testcases', 'raw initial unit tests (raw_IUT) with 10 subruns, last successful output will be considered 0th raw initial unit test', raw_initial_unit_test, task_id, initial_test_run)
+
                 if not raw_initial_unit_test:
                     continue
 
                 print(f"{task_id} -> subrun {initial_test_run}: refining raw test cases\n")
 
                 # Testcase Refinement
-                initial_unit_test = refine_test_cases(raw_initial_unit_test, put_code, putcode_functions, task_id, run)
+                initial_unit_test, lhs_fixed_initial_unit_test = refine_test_cases(raw_initial_unit_test, put_code, putcode_functions, task_id, run)
                 if not initial_unit_test:
                     helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', str(initial_unit_test), task_id, initial_test_run)
                 else:
                     helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', "\n".join(initial_unit_test), task_id, initial_test_run)
                     break
+                
             
             if initial_unit_test == False:
                 print(f"{task_id}: unable to generate initial test cases after {initial_test_run} attempts, skipping..., check tmp logs for more details.")
@@ -125,6 +129,7 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
                     put_code,
                     initial_prompt,
                     initial_unit_test,
+                    lhs_fixed_initial_unit_test,
                     mutants,
                     putcode_functions,
                     task_id,
@@ -136,12 +141,16 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
             else:
                 augmented_unit_test = initial_unit_test
             
+            if (dataset == 'refactory'):
+                data = refactory_test_buggy_versions(augmented_unit_test, putcode_functions)
+                helper.write_buggy_code_run_analysis(data)
+
             # Minimize Oracles
             final_unit_tests = minimize_oracles(task_id, putcode_functions, augmented_unit_test)
             
             print("Final Tests for", task_id)
             print(final_unit_tests)
-            helper.create_csv_from_data()
+            helper.write_mutap_analysis()
             print("--------------------------------------------------------------------")
             time.sleep(10)  # Sleep to avoid overwhelming the system
             
