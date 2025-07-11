@@ -11,14 +11,15 @@ from mutap.utils.helper import GCD
 def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: str,
                          initial_unit_test: list, lhs_fixed_unit_test: list, mutants: list, functions: list[str], task_id: str, run: int) -> list:
 
-    # Base initialization
-    current_test_suite = initial_unit_test
-    current_lhs_fixed_unit_test = lhs_fixed_unit_test
-    #  {mutants}  wont matter further as mutpy regenerates mutants and there might be difference in order
-    surving_mutants = mutants
 
     try:
+        # Base initialization
+        current_test_suite = initial_unit_test.copy()
+        current_lhs_fixed_unit_test = lhs_fixed_unit_test.copy()
+        #  {mutants}  wont matter further as mutpy regenerates mutants and there might be difference in order
+        surving_mutants = mutants.copy()
         allowed_run = 0
+        final_augmented_tests = []
         while mutants_survived > 0 and len(surving_mutants) > 0 and allowed_run < 10:
             allowed_run += 1
             GCD.run += 1
@@ -31,19 +32,17 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
                 mutant_code = f.read()
             
             mutated_function = ''
-            if len(functions) > 1 or GCD.prompt == 'few_shot':
+            if len(functions) > 1:
                 mutated_function = extract_mutated_func_name(mutant_code).strip()
-                if len(functions) > 1:
-                    mutant_code = '\n'.join(
-                        line for line in mutant_code.splitlines()
-                        if not line.strip().startswith('# mutated_function_in_mutpy:')
-                    )
+                mutant_code = '\n'.join(
+                    line for line in mutant_code.splitlines()
+                    if not line.strip().startswith('# mutated_function_in_mutpy:')
+                )
 
             # Augment prompt
             augmented_prompt = build_prompts(mutant_code, 'augmentation_prompt', mutated_function, original_code=put_code, unit_tests=current_test_suite, only_lhs_fixed_unit_tests=current_lhs_fixed_unit_test)
             helper.writeReportLog('augmented_prompt.log', 'prompts', 'augmented prompts', augmented_prompt, task_id, allowed_run)
 
-            # tag = 'test' if GCD.llm == 'deepseek-coder' else 'test_gen'
             raw_aug_unit_test = prompt_deepseek_llmc(augmented_prompt, functions=functions)
             helper.writeReportLog('raw_augmented_tests.log', 'testcases', 'raw augmented unit tests', raw_aug_unit_test, task_id, allowed_run)
 
@@ -54,6 +53,7 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
             aug_unit_test, lhs_fixed_aug_unit_test = refine_test_cases(raw_aug_unit_test, put_code, functions, task_id, allowed_run)
             if not aug_unit_test:
                 print(f"{task_id} aug_run {allowed_run}: unable to generate augmented test cases, skipping... check tmp logs for more details.")
+                # helper.write_mutap_analysis()
                 continue
 
             GCD.refined_tests += len(aug_unit_test)
@@ -71,14 +71,17 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
             )
             if not test_file_path:
                 print(f"{task_id}: unable to format test cases for mutpy, skipping..., check tmp logs for more details.")
+                exit(20)
                 continue
 
-            current_test_suite = aug_unit_test
-            current_lhs_fixed_unit_test = lhs_fixed_aug_unit_test
+            current_test_suite = aug_unit_test.copy()
+            final_augmented_tests = current_test_suite.copy()
+            current_lhs_fixed_unit_test = lhs_fixed_aug_unit_test.copy()
             final_run = True if allowed_run == 10 else False
             mutation_result = run_mutation_testing(task_id, test_file_path, functions, allowed_run, final_run=final_run)
             if not mutation_result:
                 print(f"{task_id}: unable to generate mutants in augmentation, skipping..., check tmp logs for more details.")
+                exit(21)
                 continue
             mutants_survived = int(mutation_result['survived']['total'])
             mutants = mutation_result['survived']['mutants']
@@ -91,13 +94,12 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
             if mutants_survived <= 0:
                 print("\n\t( haha, gotcha charles!... x_x )\n")
         
-            surving_mutants = mutants
+            surving_mutants = mutants.copy()
             
-
         if len(surving_mutants) > 0:
             print("\n( You got away this time, Charles... -_- )\n")
         
-        return current_test_suite
+        return final_augmented_tests
     except Exception as e:
         helper.writeTmpLog(f"\n Error (augmentation): issue augmenting testcases and mutation testing -> {e}", 'test_generation.log')
     return False
@@ -111,4 +113,5 @@ def extract_mutated_func_name(mutant_code: str) -> str:
                 return match.group(1).strip()
     except Exception as e:
         helper.writeTmpLog(f"\n Error (augmentation): issue extracting mutated function name -> {e}", 'test_generation.log')
+        exit(22)
     return ''

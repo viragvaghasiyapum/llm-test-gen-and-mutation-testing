@@ -5,7 +5,7 @@ import mutap.utils.helper as helper
 import ast
 from mutap.utils.helper import GCD
     
-def prompt_deepseek_llmc(prompt, functions= [], is_fix_prompt= False, tag = "test") -> str:
+def prompt_deepseek_llmc(prompt: str, functions: list[str] = [], is_fix_prompt= False, tag = "test") -> str:
     
     output = ""
     try:
@@ -38,15 +38,13 @@ def prompt_deepseek_llmc(prompt, functions= [], is_fix_prompt= False, tag = "tes
 
     except Exception as e:
         helper.writeTmpLog(f"\n Error (test_generation): issue -> {e}", 'test_generation.log')
-
+        exit(60)
     return output
 
 
 def extract_llama_test_block(text, tag):
     # Match all [INST]...[/INST] blocks
-    inst_blocks = re.findall(r'\[INST\](.*?)\[/INST\]', text, re.DOTALL)
-    
-    if not inst_blocks:
+    if '[/INST]' not in text:
         return ""
 
     # Only use content after the last [/INST]
@@ -90,21 +88,7 @@ def clean_test_output(raw_test_code: str, functions, is_fix_prompt) -> str:
         for line in lines:
             line = line.strip()
 
-            # if GCD.llm == 'deepseek-coder':
-            #     if line.startswith("def test"):
-            #         inside_test_func = True
-            #         # print('\ndasdasdasdasd\n')
-            #         continue  # We'll add this manually later
-
-            #     if not inside_test_func:
-            #         # print('\ndasasdasdasdasddasdasdasd\n')
-            #         continue
-
-            if line.endswith(","):
-                line = line.rstrip(",")
-
             if not line.startswith("assert "):
-                # print('\ndasda32341243123sdasdasd\n')
                 continue
 
             if not assert_pattern.match(line):
@@ -113,15 +97,26 @@ def clean_test_output(raw_test_code: str, functions, is_fix_prompt) -> str:
             if functions and not any(fname in line for fname in functions):
                 continue
 
-            cleaned_asserts.append(line)
-            if not is_fix_prompt:
-                GCD.raw_tests_generated += 1
-                # print('\ndasasd\n')
-
+            try:
+                parsed = ast.parse(line)
+                for node in parsed.body:
+                    if isinstance(node, ast.Assert):
+                        if isinstance(node.test, ast.Compare):
+                            func_expr = ast.get_source_segment(line, node.test.left)
+                            expected_expr = ast.get_source_segment(line, node.test.comparators[0])
+                            cleaned_line = f"assert {func_expr.strip()} == {expected_expr.strip()}"
+                            cleaned_asserts.append(cleaned_line)
+                            if not is_fix_prompt:
+                                GCD.raw_tests_generated += 1
+            except Exception:
+                helper.writeTmpLog(f"\nError (test_generation): extracting ouput, unparseable line skipping....-> {line}..", 'test_generation.log')
+                continue
+            
         if cleaned_asserts:
             return "\n".join(cleaned_asserts)
         else:
             return ""
     except Exception as e:
         helper.writeTmpLog(f"\nError (test_generation): issue cleaning tests -> {e}.", 'test_generation.log')
+        exit(61)
     return ""

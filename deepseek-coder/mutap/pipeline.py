@@ -12,7 +12,7 @@ import time
 from mutap.utils.helper import GCD
 from mutap.algorithms.unittest_script import refactory_test_buggy_versions
 
-def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
+def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: str):
 
     try:
         GCD.reset(full_reset=True)
@@ -25,7 +25,7 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
         GCD.llm = llm
         problems = []
         if limit_type == 'specific':
-            problems = get_problems(dataset, target= limit_value)
+            problems = get_problems(dataset, target= str(limit_value))
         else:
             probs = get_problems(dataset)
             problems = probs[:limit_value] if limit_type == 'tot' else probs
@@ -42,7 +42,7 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
             GCD.run = 1
             put_code = problem['code']
             run = 0
-
+            helper.writeTmpLog(f"\n---------------------------------------------\ntask_id: {task_id}.", 'test_generation.log')
             helper.cleanOldRunFiles(id= task_id)
             
             print("--------------------------------------------------------------------\n")
@@ -54,6 +54,9 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
             helper.writeReportLog('initial_prompt.log', 'prompts', 'initial prompt', initial_prompt, task_id, run)
 
             putcode_functions = extract_function_name(put_code)
+            if not putcode_functions:
+                print(f"{task_id}: unable to extract function names from put code, skipping...")
+                exit(10)
             initial_unit_test = lhs_fixed_initial_unit_test = False
 
             while initial_test_run < 10:
@@ -62,30 +65,38 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
                 
                 print(f"{task_id} -> subrun {initial_test_run}: generating raw test cases")
 
-                # tag = 'test' if llm == 'deepseek-coder' else 'test_gen'
                 # Raw Testcase Generation
                 raw_initial_unit_test = prompt_deepseek_llmc(initial_prompt, putcode_functions)
                 helper.writeReportLog('initial_raw_tests.log', 'testcases', 'raw initial unit tests (raw_IUT) with 10 subruns, last successful output will be considered 0th raw initial unit test', raw_initial_unit_test, task_id, initial_test_run)
-
                 if not raw_initial_unit_test:
                     continue
-
+                
+                if method == 'before_refining':
+                    initial_unit_test = raw_initial_unit_test.strip().splitlines()
+                    lhs_fixed_initial_unit_test = initial_unit_test.copy()
+                    break
+            
                 print(f"{task_id} -> subrun {initial_test_run}: refining raw test cases\n")
-
+                
                 # Testcase Refinement
                 initial_unit_test, lhs_fixed_initial_unit_test = refine_test_cases(raw_initial_unit_test, put_code, putcode_functions, task_id, run)
+
                 if not initial_unit_test:
                     helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', str(initial_unit_test), task_id, initial_test_run)
+                    continue
                 else:
                     helper.writeReportLog('initial_refined_tests.log', 'testcases', 'refined initial unit tests (IUT) with 10 subruns, last successful output will be considered 0th refined initial unit test', "\n".join(initial_unit_test), task_id, initial_test_run)
                     break
-                
             
+            GCD.subrun = initial_test_run
             if initial_unit_test == False:
                 print(f"{task_id}: unable to generate initial test cases after {initial_test_run} attempts, skipping..., check tmp logs for more details.")
+                GCD.problematic_put = 1
+                helper.write_mutap_analysis()
                 continue
             
-            GCD.refined_tests = len(initial_unit_test)
+            if method != 'before_refining':
+                GCD.refined_tests = len(initial_unit_test)
 
             # Format Testcase for Mutpy
             test_file_path = format_testcases(
@@ -96,14 +107,18 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
             )
             if not test_file_path:
                 print(f"{task_id}: unable to format test cases for mutpy, skipping..., check tmp logs for more details.")
+                exit(11)
                 continue
 
             print(f"{task_id}: mutating task & out for killing mutants\n\n( Charles, you better watch out... <_> )\n")
 
+            final_run = True if method != 'mutap' else False
             # Run Mutation Testing
-            mutation_result = run_mutation_testing(task_id, test_file_path, putcode_functions, run)
+            mutation_result = run_mutation_testing(task_id, test_file_path, putcode_functions, run, final_run=final_run)
             if not mutation_result:
                 print(f"{task_id}: unable to generate initial mutants, skipping..., check tmp logs for more details.")
+                GCD.problematic_put = 1
+                helper.write_mutap_analysis()
                 continue
 
             mutants_survived = int(mutation_result['survived']['total'])
@@ -118,7 +133,7 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
                 print("\n\t( haha, gotcha Charles!... x_x )\n")      
 
             augmented_unit_test = []
-            if mutants_survived > 0 :
+            if mutants_survived > 0 and method == 'mutap':
                 if len(mutants) <= 0 :
                     print(f"{task_id}: mutants list is empty")
                     return
@@ -135,25 +150,29 @@ def run_pipeline(limit: dict, prompt_type, llm, method, dataset):
                     task_id,
                     int(run)
                 )
-                if not augmentation_process:
+                if not augmented_unit_test:
                     print(f"{task_id}: unable to generate augmented unit tests, skipping..., check tmp logs for more details.")
+                    exit(12)
                     continue
             else:
-                augmented_unit_test = initial_unit_test
+                augmented_unit_test = initial_unit_test.copy()
             
             if (dataset == 'refactory'):
                 data = refactory_test_buggy_versions(augmented_unit_test, putcode_functions)
                 helper.write_buggy_code_run_analysis(data)
 
             # Minimize Oracles
-            final_unit_tests = minimize_oracles(task_id, putcode_functions, augmented_unit_test)
+            if method != 'before_refining':
+                print(f"{task_id}: minimizing oracles")
+                final_unit_tests = minimize_oracles(task_id, putcode_functions, augmented_unit_test)
+            else:
+                final_unit_tests = augmented_unit_test
             
             print("Final Tests for", task_id)
             print(final_unit_tests)
             helper.write_mutap_analysis()
             print("--------------------------------------------------------------------")
             time.sleep(10)  # Sleep to avoid overwhelming the system
-            
 
     except Exception as e:
         print('Error running pipeline:', e)

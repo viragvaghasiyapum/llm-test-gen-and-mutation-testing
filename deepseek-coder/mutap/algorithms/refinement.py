@@ -21,10 +21,10 @@ def syntax_fix(test: str, functions: list[str]) -> str:
         return syntax_check(fixed_test, functions, llm_fixed)
     except SyntaxError as e:
         writeTmpLog(f"\nSynatx Error (refinement): issue fixing syntax using LLM -> {e}.", 'test_generation.log')
-        return False
     except Exception as e:
         writeTmpLog(f"\Error (refinement): issue fixing syntax using LLM -> {e}.", 'test_generation.log')
-        return False
+        exit(50)
+    return False
 
 
 def syntax_check(test: str, function_names: List[str], llm_fixed, error_line= None) -> Union[List[str], bool]:
@@ -37,6 +37,7 @@ def syntax_check(test: str, function_names: List[str], llm_fixed, error_line= No
         if error_line is not None and 0 < error_line <= len(lines):
             del lines[error_line - 1]
             ommited = 1
+            GCD.fixed_by_ommiting += ommited
             code = "\n".join(lines)
         tree = ast.parse(code)
         if tree:
@@ -46,12 +47,13 @@ def syntax_check(test: str, function_names: List[str], llm_fixed, error_line= No
         
     except SyntaxError as e:
         result = syntax_check(code, function_names, e.lineno)
+        ommited = 1
     except Exception as e:
         writeTmpLog(f"\nError (refinement): issue checking syntax -> {e}.", 'test_generation.log')
+        exit(51)
         result = False
     if ommited == 0 and llm_fixed == 1:
         GCD.fixed_by_model += 1
-    GCD.fixed_by_ommiting += ommited
     return result
 
 def intended_behavior_fix(tests: list, put_code: str) -> list:
@@ -83,8 +85,7 @@ def intended_behavior_fix(tests: list, put_code: str) -> list:
         if errored:
             GCD.ibf_assertion_errored += 1
     except Exception as e:
-        fixed = False
-        only_lhs_fixed = False
+        fixed = only_lhs_fixed = False
         writeTmpLog(f"\nError (refinement): issue fixing intended behaviour -> {e}.", 'test_generation.log')
 
     return fixed, only_lhs_fixed
@@ -94,12 +95,14 @@ def refine_test_cases(raw_tests: str, put_code: str, functions: list[str], task_
         lines = raw_tests.strip().splitlines()
         if not functions:
             writeTmpLog("\nError (refinement): function name(s) not defined.", 'test_generation.log')
-            return '';
+            exit(52)
+            return False, False;
         syntactically_valid = syntax_fix("\n".join(lines), functions)
         if (syntactically_valid == False):
             writeTmpLog("\nError (refinement): issue extracting function while refining test cases.", 'test_generation.log')
-            return False
+            return False, False
         return intended_behavior_fix(syntactically_valid, put_code)
     except Exception as e:
         writeTmpLog(f"\nError (refinement): issue refining test cases -> {e}.", 'test_generation.log')
-    return False
+        exit(53)
+    return False, False

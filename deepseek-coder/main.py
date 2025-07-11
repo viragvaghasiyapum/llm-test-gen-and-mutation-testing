@@ -1,6 +1,8 @@
 from mutap.pipeline import run_pipeline
 from scripts.dataset_formatter import process_humaneval, process_refactory
 import mutap.utils.helper as helper
+# from test_pynguin.pynguin_test import execute_pynguin_test
+import os
 
 def main():
     while True:
@@ -71,7 +73,8 @@ def main():
         # Run pipeline
         if method == "pynguin":
             # run_pynguin_pipeline(limit=limit)
-            print ("\n Under construction, please use the other methods for now.")
+            # execute_pynguin_test(limit, dataset)
+            print('Work in progress for Pynguin test generation...')
         else:
             run_pipeline(limit, prompt_mode, llm, method, dataset)
 
@@ -121,9 +124,12 @@ def get_task_limit(dataset):
 
 
 def check_formatted_data_src_setup():
-    process_humaneval(helper.getPath("humaneval_src"), helper.getPath("humaneval_formatted_data_path"))
-    process_refactory(helper.getPath("refactory_src"), helper.getPath("refactory_formatted_data_path"))
-
+    try:
+        process_humaneval(helper.getPath("humaneval_src"), helper.getPath("humaneval_formatted_data_path"))
+        process_refactory(helper.getPath("refactory_src"), helper.getPath("refactory_formatted_data_path"))
+    except Exception as e:
+        print(f"Error during dataset formatting: {e}")
+        exit(9)
 
 if __name__ == '__main__':
     check_formatted_data_src_setup()

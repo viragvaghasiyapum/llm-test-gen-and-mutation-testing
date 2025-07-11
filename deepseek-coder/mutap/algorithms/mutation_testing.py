@@ -37,7 +37,9 @@ def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run
                     log.write(f"{line}\n")
         
         mutant_files_path = os.path.join(out_dir, "mutants")
-        extract_mutant_code(mutant_files_path, out_dir, functions)
+        if not extract_mutant_code(mutant_files_path, out_dir, functions):
+            helper.writeTmpLog("\n Error (muatation_testing): issue extracting mutant code", 'test_generation.log')
+            exit(30)
 
         mutant_log_path = os.path.join(out_dir, f"report{run}.yaml")
         result = extract_mutation_summary(mutant_log_path, final_run, isOracleRun)
@@ -53,10 +55,10 @@ def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run
         with open(helper.getTempFile(f"mutpy_error_run{run}_{task_id}.log"), "w") as log:
             log.write("STDOUT:\n" + e.stdout + "\n\nSTDERR:\n" + e.stderr)
         print(f"MutPy failed for {task_id}. See mutpy_error_run{run}_{task_id}.log for details.")
-        
+        return False
     except Exception as e:
         helper.writeTmpLog(f"\n Error (muatation_testing): issue testing mutants -> {e}", 'test_generation.log')
-    return False
+        exit(31)
     
 
    
@@ -118,6 +120,7 @@ def extract_mutation_summary(yaml_path, is_final_run=False, oracle_run=False):
         }
     except Exception as e:
         helper.writeTmpLog(f"\n Error (muatation_testing): issue extracting summary -> {e}", 'test_generation.log')
+        exit(32)
         return False  
 
 def get_function_name_at_line(code, line_no):
@@ -179,7 +182,7 @@ def extract_mutant_code(directory, output_dir, functions):
         return True
     except Exception as e:
         helper.writeTmpLog(f"\n Error (muatation_testing): issue extracting mutant code -> {e}", 'test_generation.log')
-        return False
+    return False
 
 def cleanup(files):
     try:

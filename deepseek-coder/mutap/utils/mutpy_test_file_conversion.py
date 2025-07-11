@@ -58,9 +58,4 @@ def format_testcases(code: str, id: str, run: int, function_name: list[str] = []
 
     except Exception as e:
         helper.writeTmpLog(f"Error (mupty_format_conversion): issue formatting test cases for {id} run {run} -> {e}", 'test_generation.log')
-        return False
-
-
-def extract_func_name(line: str) -> str:
-    match = re.search(r'assert\s+([a-zA-Z_][\w]*)\s*\(', line)
-    return match.group(1) if match else None
+    return False

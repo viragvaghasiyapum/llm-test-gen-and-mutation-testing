@@ -2,13 +2,13 @@ from data.humaneval.few_shot_examples import humaneval_examples, llama_humaneval
 from data.refactory.few_shot_examples import refactory_examples
 from mutap.utils.helper import GCD
 
-def build_prompts(put_code, step= 'initial_prompt', function_str=None, original_code='', unit_tests='', only_lhs_fixed_unit_tests=''):
+def build_prompts(put_code: str, step: str = 'initial_prompt', function_str: str = '', original_code: str = '', unit_tests = '', only_lhs_fixed_unit_tests = ''):
 
     llm = GCD.llm
     dataset = GCD.dataset
     type = GCD.prompt
 
-    examples = humaneval_examples if dataset == 'humaneval' else refactory_examples
+    examples = humaneval_examples.copy() if dataset == 'humaneval' else refactory_examples.copy()
 
     if llm  == 'deepseek-coder':
         lhs_fixed_unit_tests = '\t'+ '\n\t'.join(only_lhs_fixed_unit_tests) if isinstance(only_lhs_fixed_unit_tests, list) else ''
@@ -82,10 +82,10 @@ def build_prompts(put_code, step= 'initial_prompt', function_str=None, original_
                 return f"{sys_instr}{code_string}"
             
             elif step == 'augmentation_prompt':
-                sys_instr = "[INST]\n<<SYS>>\nYou are a Python test generator. Output only Python assert statements in the format: 'assert function(input) == output'\n\n- Do NOT define any functions.\n- Do NOT add comments or explanations.\n- Do NOT include any markdown or formatting.\n- Enclose the assert statements inside a <test> block.\n<</SYS>>\n\n"          
-                initial_prompt = f"The following is the correct implementation:\n```python\n{original_code}\n```\n\n The following are the test cases that do NOT detect faults:\n```python\n<test>\n{lhs_fixed_unit_tests}\n</test>\n```\n\n"
+                sys_instr = "[INST]\n<<SYS>>\nYou are a Python test generator. Output only Python assert statements in the format: 'assert function(input) == output'\n\n- Do NOT define any functions.\n- Do NOT add comments or explanations.\n- Do NOT include any markdown or formatting.\n- Enclose the assert statements inside a <test> block.\n- Output only and only new test cases.\n<</SYS>>\n\n"          
+                initial_prompt = f"The following is the correct implementation:\n```python\n{original_code}\n```\n\n The following are the test cases that do NOT detect faults:\n```python\n<test>\n{unit_tests}\n</test>\n```\n\n"
                 code_string = f"These fail to expose the following faulty implementation:\n```python\n{put_code}\n```\n\n"
-                output_instr = f"Please generate more assert-based test cases that would pass on the correct implementation but fail on the faulty implementation{function_str}.\n[/INST]\n"
+                output_instr = f"Please generate more assert-based test cases that would pass on the correct implementation but fail on the faulty implementation{function_str}, ONLY output new testcases.\n[/INST]\n"
     
                 # unit_tests = '\n\t'.join(unit_tests) if isinstance(unit_tests, list) else ''
                 # sys_instr = "[INST]\n<<SYS>>\nYou are a Python test generator. Output only Python assert statements in the format: 'assert function(input) == output'\n\n- Do NOT define any functions.\n- Do NOT add comments or explanations.\n- Do NOT include any markdown or formatting.\n- Enclose the assert statements inside a <test> block.\n<</SYS>>\n\n"          
@@ -96,7 +96,7 @@ def build_prompts(put_code, step= 'initial_prompt', function_str=None, original_
             
             
         elif type == 'few_shot':
-            examples = llama_humaneval_examples
+            examples = llama_humaneval_examples.copy()
             if step == 'initial_prompt':
                 sys_instr = "[INST]\n<<SYS>>\nYou are a Python test generator. Output only Python assert statements in the format: 'assert function(input) == output'\n\n- Do NOT define any functions.\n- Do NOT add comments or explanations.\n- Do NOT include any markdown or formatting.\n- Enclose the assert statements inside a <test> block.\n<</SYS>>\n\n"          
                 example_str = "Here are a few examples for reference:\n"
@@ -110,15 +110,15 @@ def build_prompts(put_code, step= 'initial_prompt', function_str=None, original_
                 return f"{sys_instr}{example_str}{code_string}"
             
             elif step == 'augmentation_prompt':
-                sys_instr = "[INST]\n<<SYS>>\nYou are a Python test generator. Output only Python assert statements in the format: 'assert function(input) == output'\n\n- Do NOT define any functions.\n- Do NOT add comments or explanations.\n- Do NOT include any markdown or formatting.\n- Enclose the assert statements inside a <test> block.\n<</SYS>>\n\n"          
+                sys_instr = "[INST]\n<<SYS>>\nYou are a Python test generator. Output only Python assert statements in the format: 'assert function(input) == output'\n\n- Do NOT define any functions.\n- Do NOT add comments or explanations.\n- Do NOT include any markdown or formatting.\n- Enclose the assert statements inside a <test> block.\n- Output only and only new test cases.\n<</SYS>>\n\n"          
                 example_str = "Here are a few examples for reference:\n"
                 count = 1
                 for example in examples:
                     example_str += f"\nExample Function {count}:\n```python\n{example['code']}\n```\n\nExample {count} Test Cases:\n```python\n<test>\n{example['test']}\n</test>\n```\n"
                     count += 1
-                initial_prompt = f"\nThe following is the correct implementation:\n```python\n{original_code}\n```\n\n The following are the test cases that do NOT detect faults:\n```python\n<test>\n{lhs_fixed_unit_tests}\n</test>\n```\n\n"
+                initial_prompt = f"\nThe following is the correct implementation:\n```python\n{original_code}\n```\n\n The following are the test cases that do NOT detect faults:\n```python\n<test>\n{unit_tests}\n</test>\n```\n\n"
                 code_string = f"These fail to expose the following faulty implementation:\n```python\n{put_code}\n```\n\n"
-                output_instr = f"Please generate more assert-based test cases that would pass on the correct implementation but fail on the faulty implementation{function_str}.\n[/INST]\n"
+                output_instr = f"Please generate new assert-based test cases that would pass on the correct implementation but fail on the faulty implementation{function_str}, ONLY output new testcases.\n[/INST]\n"
                 
                 return f"{sys_instr}{example_str}{initial_prompt}{code_string}{output_instr}"
                 

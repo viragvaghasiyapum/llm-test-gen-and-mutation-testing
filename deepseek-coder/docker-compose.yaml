@@ -16,6 +16,7 @@ services:
       - ./scripts:/code/scripts
       - ./output:/code/output
       - ./main.py:/code/main.py
+      - ./test_pynguin:/code/test_pynguin
       - ./tmp:/code/tmp
     working_dir: /code
     command: ["/venv/bin/python", "main.py"]

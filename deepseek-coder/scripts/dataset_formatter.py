@@ -56,6 +56,7 @@ def clean_test(test_code):
     return '\n'.join(cleaned_lines)
 
 def process_humaneval(input_path, output_base_dir):
+
     if not (os.path.exists(output_base_dir) and os.path.isdir(output_base_dir)):
         os.makedirs(output_base_dir, exist_ok=True)
 
@@ -83,8 +84,6 @@ def process_humaneval(input_path, output_base_dir):
         print("✅ Processing complete. Output saved in:", output_base_dir)
     else:
         print("✅ HumanEval already formatted.\n")
-
-import ast
 
 def clean_python_code(code):
     class DocstringRemover(ast.NodeTransformer):
