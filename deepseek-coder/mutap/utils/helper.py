@@ -45,6 +45,9 @@ def getPath(name, id=None):
         elif name == "buggy_unittests_run":
             path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, name)
             check = True
+        elif name == "buggy_unittests_run_report":
+            path = os.path.join(base_dir, "output", f"{dataset}", "analysis_reports", "buggy_code_run", "reports", f"{GCD.task_id}")
+            check = True
         elif name == "oracle_run":
             path = os.path.join(base_dir, "output", f"{dataset}", "formatted", id, "mutants", "reports", "oracle_run")
             check = True
@@ -57,6 +60,9 @@ def getPath(name, id=None):
             path = os.path.join(base_dir, "buildllama", "build", "bin", "llama-cli")
         elif name == "analysis_report_path":
             path = os.path.join(base_dir, "output", f"{dataset}", "analysis_reports")
+            check = True
+        elif name == "buggy_code_run_analysis_path":
+            path = os.path.join(base_dir, "output", f"{dataset}", "analysis_reports", "buggy_code_run")
             check = True
         elif name == "humaneval_src":
             path = os.path.join(base_dir, "data", "humaneval", "human-eval-v2-20210705.jsonl")
@@ -158,6 +164,16 @@ def writeReportLog(file, dir, info, content: str, taskId, run) -> bool:
         print(f"Error writing report log for {file}: {e}")
         return False
     
+def write_buggy_report(content, filename):
+    try:
+        dir = getPath('buggy_unittests_run_report')
+        with open(os.path.join(dir, filename), 'a') as f:
+            f.write(content)
+        return True
+    except Exception as e:
+        print(f"Error writing buggy report for {filename}: {e}")
+        return False
+    
 def extract_function_name(code: str) -> list[str]:
     try:
         parsed = ast.parse(code)
@@ -184,31 +200,39 @@ class GCD:
     mutation_types, survived_types, killed_types, timeout_types = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
     
     # testcases info
+    final_tests = ''
     raw_tests_generated = refined_tests = duplicate_tests_removed = 0
     syntax_errored = fixed_by_model = fixed_by_ommiting = 0
     ibf_assertion_errored = ibf_repaired = ibf_unrepaired = 0
     
     @classmethod
-    def reset(cls, full_reset= False):
+    def reset(cls, full_reset= False, mutation_reset= False, normal_reset= False):
         
         if full_reset:
             # run info
-            cls.task_id = cls.dataset = cls.method = cls.prompt = cls.llm = ''
-        
-        cls.run = cls.subrun = cls.problematic_put = 0
-        # mutation info
-        cls.mutation_score = 0.0
-        cls.total_mutants = cls.survived_total = cls.killed_total = cls.timeout_total = 0
-        cls.mutation_types, cls.survived_types, cls.killed_types, cls.timeout_types = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
-        # testcases info
-        cls.raw_tests_generated = cls.refined_tests = cls.duplicate_tests_removed = 0
-        cls.syntax_errored = cls.fixed_by_model = cls.fixed_by_ommiting = cls.ibf_assertion_errored = cls.ibf_repaired = cls.ibf_unrepaired = 0
+            cls.task_id = cls.dataset = cls.method = cls.prompt = cls.llm =  ''
+            normal_reset = True
 
+        if normal_reset:
+            cls.run = cls.subrun = cls.problematic_put = 0
+            # testcases info
+            cls.final_tests = ''
+            cls.raw_tests_generated = cls.refined_tests = cls.duplicate_tests_removed = 0
+            cls.syntax_errored = cls.fixed_by_model = cls.fixed_by_ommiting = cls.ibf_assertion_errored = cls.ibf_repaired = cls.ibf_unrepaired = 0
+            mutation_reset = True
+        
+        if mutation_reset:
+            # mutation info
+            cls.mutation_score = 0.0
+            cls.total_mutants = cls.survived_total = cls.killed_total = cls.timeout_total = 0
+            cls.mutation_types, cls.survived_types, cls.killed_types, cls.timeout_types = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
+        
+        
 
 def write_mutap_analysis():
     
     try:
-        header = ['task_id', 'dataset', 'method', 'prompt', 'llm', 'run', 'subrun', 'problematic_put', 'mutation_score', 'mutation_types', 'total_mutants', 'survived_total', 'survived_types', 'killed_total', 'killed_types', 'timeout_total', 'timeout_types', 'raw_tests_generated', 'refined_tests' ,'duplicate_tests_removed', 'syntax_errored', 'fixed_by_model', 'fixed_by_ommiting', 'ibf_assertion_errored', 'ibf_repaired', 'ibf_unrepaired']
+        header = ['task_id', 'dataset', 'method', 'prompt', 'llm', 'run', 'subrun', 'problematic_put', 'final_tests', 'mutation_score', 'mutation_types', 'total_mutants', 'survived_total', 'survived_types', 'killed_total', 'killed_types', 'timeout_total', 'timeout_types', 'raw_tests_generated', 'refined_tests' ,'duplicate_tests_removed', 'syntax_errored', 'fixed_by_model', 'fixed_by_ommiting', 'ibf_assertion_errored', 'ibf_repaired', 'ibf_unrepaired']
 
         # Row data
         row = {
@@ -220,6 +244,7 @@ def write_mutap_analysis():
             'run'            : GCD.run,
             'subrun'         : GCD.subrun,
             'problematic_put': GCD.problematic_put,
+            'final_tests'    : GCD.final_tests,
 
             'mutation_score': GCD.mutation_score,
             'total_mutants' : GCD.total_mutants,
@@ -257,8 +282,8 @@ def write_mutap_analysis():
 
 def write_buggy_code_run_analysis(data: list[dict]):
     try:
-        header = ['task_id', 'dataset', 'total_buggy_codes', 'killed', 'survived', 'total_testcases']
-        output_path = os.path.join(getPath('analysis_report_path'), f"{GCD.prompt}_{GCD.dataset}_buggy_code_run.csv")
+        header = ['question_id', 'task_id', 'dataset', 'method', 'llm', 'total_buggy_codes', 'killed', 'survived', 'total_testcases', 'timeout']
+        output_path = os.path.join(getPath('buggy_code_run_analysis_path'), f"{GCD.prompt}_{GCD.dataset}_{GCD.llm}_buggy_code_run.csv")
         write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
         with open(output_path, 'a', newline='') as f:
             for row in data:

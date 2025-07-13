@@ -134,3 +134,109 @@ def check_formatted_data_src_setup():
 if __name__ == '__main__':
     check_formatted_data_src_setup()
     main()
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'zero_shot',
+    #     'llama2chat',
+    #     'mutap',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'zero_shot',
+    #     'llama2chat',
+    #     'after_refining',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'zero_shot',
+    #     'llama2chat',
+    #     'before_refining',
+    #     'refactory'
+    # )
+
+    
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'few_shot',
+    #     'llama2chat',
+    #     'mutap',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'few_shot',
+    #     'llama2chat',
+    #     'after_refining',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'few_shot',
+    #     'llama2chat',
+    #     'before_refining',
+    #     'refactory'
+    # )
+
+
+
+
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'zero_shot',
+    #     'deepseek-coder',
+    #     'mutap',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'zero_shot',
+    #     'deepseek-coder',
+    #     'after_refining',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'zero_shot',
+    #     'deepseek-coder',
+    #     'before_refining',
+    #     'refactory'
+    # )
+
+    
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'few_shot',
+    #     'deepseek-coder',
+    #     'mutap',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'few_shot',
+    #     'deepseek-coder',
+    #     'after_refining',
+    #     'refactory'
+    # )
+
+    # run_pipeline(
+    #     {'type': 'all', 'value': None},
+    #     'few_shot',
+    #     'deepseek-coder',
+    #     'before_refining',
+    #     'refactory'
+    # )
+
+    print("\n\n run successful.")

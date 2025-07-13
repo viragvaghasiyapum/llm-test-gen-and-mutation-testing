@@ -7,7 +7,7 @@ import yaml
 import ast
 from mutap.utils.helper import GCD
 
-def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run, isOracleRun=False, final_run=False):
+def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run, isOracleRun=False):
 
     if (GCD.dataset == 'refactory'):
         put_path = helper.getPath('refactory_formatted_data_path') + "/" + task_id + "/reference.py"
@@ -42,7 +42,7 @@ def run_mutation_testing(task_id: str, test_path: str, functions: list[str], run
             exit(30)
 
         mutant_log_path = os.path.join(out_dir, f"report{run}.yaml")
-        result = extract_mutation_summary(mutant_log_path, final_run, isOracleRun)
+        result = extract_mutation_summary(mutant_log_path, isOracleRun)
         
         # Clean up temporary files
         cleanup(files = [
@@ -70,7 +70,7 @@ def unknown_tag_handler(loader, tag_suffix, node):
 
 IgnoreUnknownTagsLoader.add_multi_constructor('tag:', unknown_tag_handler)
 
-def extract_mutation_summary(yaml_path, is_final_run=False, oracle_run=False):
+def extract_mutation_summary(yaml_path, oracle_run=False):
     try:
         with open(yaml_path, 'r') as f:
             data = yaml.load(f, Loader=IgnoreUnknownTagsLoader)
@@ -82,6 +82,8 @@ def extract_mutation_summary(yaml_path, is_final_run=False, oracle_run=False):
         all_mutations = data.get('mutations', [])
         total_mutants = len(all_mutations)
 
+        if not oracle_run:
+            GCD.reset(mutation_reset=True)
         for m in all_mutations:
             status = m.get('status')
             file_str = f"mutant_{m.get('number')}.py"
@@ -92,8 +94,8 @@ def extract_mutation_summary(yaml_path, is_final_run=False, oracle_run=False):
             if status == 'timeout':
                 timedout.append(file_str)
 
-            # final run csv data collection
-            if (is_final_run or mutation_score >= 100) and not oracle_run:
+            # muatation data refresh for csv data collection
+            if not oracle_run:
                 op = m.get('mutations', [{}])[0].get('operator')
                 if op is not None:
                     GCD.mutation_types[op] += 1
@@ -104,7 +106,7 @@ def extract_mutation_summary(yaml_path, is_final_run=False, oracle_run=False):
                     if status == 'timeout':
                         GCD.timeout_types[op] += 1
 
-        if (is_final_run or mutation_score >= 100) and not oracle_run:
+        if not oracle_run:
             GCD.mutation_score = mutation_score
             GCD.survived_total = len(survived)
             GCD.killed_total = len(killed)

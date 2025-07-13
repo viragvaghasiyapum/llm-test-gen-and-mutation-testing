@@ -19,7 +19,7 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
         #  {mutants}  wont matter further as mutpy regenerates mutants and there might be difference in order
         surving_mutants = mutants.copy()
         allowed_run = 0
-        final_augmented_tests = []
+        final_augmented_tests = initial_unit_test.copy()
         while mutants_survived > 0 and len(surving_mutants) > 0 and allowed_run < 10:
             allowed_run += 1
             GCD.run += 1
@@ -77,8 +77,8 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
             current_test_suite = aug_unit_test.copy()
             final_augmented_tests = current_test_suite.copy()
             current_lhs_fixed_unit_test = lhs_fixed_aug_unit_test.copy()
-            final_run = True if allowed_run == 10 else False
-            mutation_result = run_mutation_testing(task_id, test_file_path, functions, allowed_run, final_run=final_run)
+            # final_run = True if allowed_run == 10 else False
+            mutation_result = run_mutation_testing(task_id, test_file_path, functions, allowed_run)
             if not mutation_result:
                 print(f"{task_id}: unable to generate mutants in augmentation, skipping..., check tmp logs for more details.")
                 exit(21)

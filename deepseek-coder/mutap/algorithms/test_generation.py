@@ -43,17 +43,21 @@ def prompt_deepseek_llmc(prompt: str, functions: list[str] = [], is_fix_prompt= 
 
 
 def extract_llama_test_block(text, tag):
-    # Match all [INST]...[/INST] blocks
     if '[/INST]' not in text:
         return ""
 
-    # Only use content after the last [/INST]
     post_inst_text = text.split('[/INST]', 1)[-1]
 
-    # Search for the first <tag>...</tag> block after [/INST]
-    match = re.search(rf"<{tag}>(.*?)</{tag}>", post_inst_text, re.DOTALL)
-    
-    return match.group(1).strip() if match else ""
+    # Extract everything from the first <tag> to the last </tag>
+    pattern = rf"<{tag}>(.*?)</{tag}>"
+    matches = list(re.finditer(pattern, post_inst_text, re.DOTALL))
+
+    if not matches:
+        return ""
+
+    # Join all inner contents of <tag>...</tag> blocks
+    content = "\n".join(m.group(1).strip() for m in matches)
+    return content.strip()
     
 #     return ""
 # def extract_function_from_line(line):

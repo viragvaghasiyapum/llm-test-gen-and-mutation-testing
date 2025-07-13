@@ -35,7 +35,7 @@ def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: 
 
         for idx, problem in enumerate(problems): 
             
-            GCD.reset()
+            GCD.reset(normal_reset= True)
             initial_test_run = -1
             task_id = problem['task_id']
             GCD.task_id = task_id
@@ -89,10 +89,12 @@ def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: 
                     break
             
             GCD.subrun = initial_test_run
-            if initial_unit_test == False:
+            if initial_unit_test in [False, None, []]:
                 print(f"{task_id}: unable to generate initial test cases after {initial_test_run} attempts, skipping..., check tmp logs for more details.")
                 GCD.problematic_put = 1
                 helper.write_mutap_analysis()
+                if GCD.dataset == 'refactory':
+                    execute_buggy_run([], [])
                 continue
             
             if method != 'before_refining':
@@ -112,13 +114,15 @@ def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: 
 
             print(f"{task_id}: mutating task & out for killing mutants\n\n( Charles, you better watch out... <_> )\n")
 
-            final_run = True if method != 'mutap' else False
+            # final_run = True if method != 'mutap' else False
             # Run Mutation Testing
-            mutation_result = run_mutation_testing(task_id, test_file_path, putcode_functions, run, final_run=final_run)
+            mutation_result = run_mutation_testing(task_id, test_file_path, putcode_functions, run)
             if not mutation_result:
                 print(f"{task_id}: unable to generate initial mutants, skipping..., check tmp logs for more details.")
                 GCD.problematic_put = 1
                 helper.write_mutap_analysis()
+                if GCD.dataset == 'refactory':
+                    execute_buggy_run([], [])    
                 continue
 
             mutants_survived = int(mutation_result['survived']['total'])
@@ -158,8 +162,7 @@ def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: 
                 augmented_unit_test = initial_unit_test.copy()
             
             if (dataset == 'refactory'):
-                data = refactory_test_buggy_versions(augmented_unit_test, putcode_functions)
-                helper.write_buggy_code_run_analysis(data)
+                execute_buggy_run(augmented_unit_test.copy(), putcode_functions.copy())
 
             # Minimize Oracles
             if method != 'before_refining':
@@ -168,6 +171,7 @@ def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: 
             else:
                 final_unit_tests = augmented_unit_test
             
+            GCD.final_tests = "\n".join(final_unit_tests) if isinstance(final_unit_tests, list) else str(final_unit_tests)
             print("Final Tests for", task_id)
             print(final_unit_tests)
             helper.write_mutap_analysis()
@@ -178,4 +182,11 @@ def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: 
         print('Error running pipeline:', e)
 
     
-    
+def execute_buggy_run(unit_tests, functions):
+    try:
+        data = refactory_test_buggy_versions(unit_tests, functions)
+        helper.write_buggy_code_run_analysis(data)
+    except Exception as e:
+        print(f"Error in execute_buggy_run: {e}")
+        helper.writeTmpLog(f"Error in execute_buggy_run: {e}", 'test_generation.log')
+        exit(13)

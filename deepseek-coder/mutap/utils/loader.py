@@ -6,7 +6,7 @@ def get_problems(dataset: str, target: str =None) -> list[dict]:
     problems = []
     base_dir = helper.getPath(f"{dataset}_formatted_data_path")
     if dataset == 'humaneval':
-        task_ids = ["task_" + target] if target is not None else sorted(os.listdir(base_dir))
+        task_ids = ["task_" + target] if target is not None else sorted(os.listdir(base_dir))#[5:]
 
         for task_id in task_ids:
             func_path = os.path.join(base_dir, task_id, "function.py")

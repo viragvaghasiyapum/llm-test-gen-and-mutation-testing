@@ -10,17 +10,27 @@ def syntax_fix(test: str, functions: list[str]) -> str:
     try:
         llm_fixed = 0
         fixed_test = test
-        if not ast.parse(test):
+        fix = False
+        try:
+            tree = ast.parse(test)
+            if not tree:
+                fix = True
+        except SyntaxError as e:
+            fix = True
+        
+        if fix:
             prompt = build_prompts(test, step='syntax_fix_prompt')
             fixed_test = test_gen.prompt_deepseek_llmc(prompt, functions=functions, is_fix_prompt=True, tag='fixed')
             fixed_test = fixed_test.strip().splitlines()
             fixed_test = '\n'.join(fixed_test);
             llm_fixed = 1
-        
+            GCD.fixed_by_model += 1
+            
         GCD.syntax_errored += llm_fixed
         return syntax_check(fixed_test, functions, llm_fixed)
-    except SyntaxError as e:
-        writeTmpLog(f"\nSynatx Error (refinement): issue fixing syntax using LLM -> {e}.", 'test_generation.log')
+    
+    # except SyntaxError as e:
+    #     writeTmpLog(f"\nSynatx Error (refinement): issue fixing syntax using LLM -> {e}.", 'test_generation.log')
     except Exception as e:
         writeTmpLog(f"\Error (refinement): issue fixing syntax using LLM -> {e}.", 'test_generation.log')
         exit(50)
@@ -31,13 +41,13 @@ def syntax_check(test: str, function_names: List[str], llm_fixed, error_line= No
     lines = []
     result = False
     code = test.strip()
-    ommited = 0
+    # ommited = 0
     try:
         lines = code.splitlines()
         if error_line is not None and 0 < error_line <= len(lines):
             del lines[error_line - 1]
-            ommited = 1
-            GCD.fixed_by_ommiting += ommited
+            # ommited = 1
+            GCD.fixed_by_ommiting += 1
             code = "\n".join(lines)
         tree = ast.parse(code)
         if tree:
@@ -47,13 +57,13 @@ def syntax_check(test: str, function_names: List[str], llm_fixed, error_line= No
         
     except SyntaxError as e:
         result = syntax_check(code, function_names, e.lineno)
-        ommited = 1
+        # ommited = 1
     except Exception as e:
         writeTmpLog(f"\nError (refinement): issue checking syntax -> {e}.", 'test_generation.log')
         exit(51)
         result = False
-    if ommited == 0 and llm_fixed == 1:
-        GCD.fixed_by_model += 1
+    # if ommited == 0 and llm_fixed == 1:
+    #     GCD.fixed_by_model += 1
     return result
 
 def intended_behavior_fix(tests: list, put_code: str) -> list:
