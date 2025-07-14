@@ -1,0 +1,20 @@
+task_id,dataset,method,prompt,llm,run,subrun,problematic_put,final_tests,mutation_score,mutation_types,total_mutants,survived_total,survived_types,killed_total,killed_types,timeout_total,timeout_types,raw_tests_generated,refined_tests,duplicate_tests_removed,syntax_errored,fixed_by_model,fixed_by_ommiting,ibf_assertion_errored,ibf_repaired,ibf_unrepaired
+question_1,refactory,mutap,zero_shot,llama2chat,1,10,1,,0.0,{},0,0,{},0,{},0,{},47,0,0,0,0,0,11,0,47
+question_2,refactory,mutap,zero_shot,llama2chat,11,0,0,"assert contains_unique_day(7, [('Alice', 1990), ('Bob', 1985), ('Charlie', 1995)]) == False
+assert unique_day(5, [('Alice', 1990), ('Bob', 1985), ('Charlie', 1995)]) == False
+assert unique_month(7, [('Alice', 1990), ('Bob', 1985), ('Charlie', 1995)]) == False",45.45454545454545,"{""ASR"": 2, ""COI"": 3, ""LCR"": 1, ""ROR"": 5}",11,6,"{""ASR"": 2, ""COI"": 2, ""ROR"": 2}",5,"{""COI"": 1, ""LCR"": 1, ""ROR"": 3}",0,{},33,33,30,0,0,0,11,13,0
+question_3,refactory,mutap,zero_shot,llama2chat,1,0,0,"assert remove_extras([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]",100.0,"{""COD"": 1, ""COI"": 1}",2,0,{},2,"{""COD"": 1, ""COI"": 1}",0,{},4,4,0,0,0,0,1,4,0
+question_4,refactory,mutap,zero_shot,llama2chat,11,0,0,"assert sort_age([('Alice', 25), ('Bob', 30), ('Charlie', 28), ('David', 35)]) == [('David', 35), ('Bob', 30), ('Charlie', 28), ('Alice', 25)]",60.0,"{""AOR"": 2, ""COI"": 1, ""ROR"": 2}",5,2,"{""AOR"": 1, ""ROR"": 1}",3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},61,61,10,0,0,0,1,3,0
+question_5,refactory,mutap,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,4,0,0,0,0,1,4,0
+question_1,refactory,after_refining,zero_shot,llama2chat,1,10,1,,0.0,{},0,0,{},0,{},0,{},48,0,0,0,0,0,11,0,48
+question_2,refactory,after_refining,zero_shot,llama2chat,1,0,0,"assert contains_unique_day(7, [('Alice', 1990), ('Bob', 1980), ('Charlie', 1995)]) == False
+assert unique_day(5, [('Alice', 1990), ('Bob', 1980), ('Charlie', 1995)]) == False
+assert unique_month(7, [('Alice', 1990), ('Bob', 1980), ('Charlie', 1995)]) == False",45.45454545454545,"{""ASR"": 2, ""COI"": 3, ""LCR"": 1, ""ROR"": 5}",11,6,"{""ASR"": 2, ""COI"": 2, ""ROR"": 2}",5,"{""COI"": 1, ""LCR"": 1, ""ROR"": 3}",0,{},3,3,0,0,0,0,1,3,0
+question_3,refactory,after_refining,zero_shot,llama2chat,1,0,0,"assert remove_extras([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]",100.0,"{""COD"": 1, ""COI"": 1}",2,0,{},2,"{""COD"": 1, ""COI"": 1}",0,{},4,4,0,0,0,0,1,4,0
+question_4,refactory,after_refining,zero_shot,llama2chat,1,0,0,"assert sort_age([('Alice', 25), ('Bob', 30), ('Charlie', 28), ('David', 35)]) == [('David', 35), ('Bob', 30), ('Charlie', 28), ('Alice', 25)]",60.0,"{""AOR"": 2, ""COI"": 1, ""ROR"": 2}",5,2,"{""AOR"": 1, ""ROR"": 1}",3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+question_5,refactory,after_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,4,0,0,0,0,1,4,0
+question_1,refactory,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+question_2,refactory,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+question_3,refactory,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+question_4,refactory,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+question_5,refactory,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},7,0,0,0,0,0,0,0,0

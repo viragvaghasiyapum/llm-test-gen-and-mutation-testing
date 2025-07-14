@@ -1,0 +1,100 @@
+task_id,dataset,method,prompt,llm,run,subrun,problematic_put,final_tests,mutation_score,mutation_types,total_mutants,survived_total,survived_types,killed_total,killed_types,timeout_total,timeout_types,raw_tests_generated,refined_tests,duplicate_tests_removed,syntax_errored,fixed_by_model,fixed_by_ommiting,ibf_assertion_errored,ibf_repaired,ibf_unrepaired
+task_0,humaneval,mutap,zero_shot,deepseek-coder,5,0,0,"assert has_close_elements([1, 3], 0.5) == False
+assert has_close_elements([1, 3], 2) == False
+assert has_close_elements([-1, -1], 0.5) == True",100.0,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,0,{},6,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",0,{},16,16,3,0,0,0,5,6,0
+task_1,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,assert separate_paren_groups('(()())') == ['(()())'],100.0,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",8,0,{},8,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",0,{},3,3,0,0,0,0,0,0,0
+task_10,humaneval,mutap,zero_shot,deepseek-coder,11,0,0,assert make_palindrome('abc') == 'abcba',93.33333333333333,"{""AOD"": 2, ""AOR"": 3, ""ASR"": 1, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 4}",15,1,"{""ASR"": 1}",9,"{""AOD"": 2, ""AOR"": 2, ""COD"": 1, ""COI"": 1, ""SIR"": 3}",5,"{""AOR"": 1, ""COD"": 1, ""COI"": 1, ""ROR"": 1, ""SIR"": 1}",45,45,39,0,0,0,4,4,0
+task_100,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert make_a_pile(2) == [2, 4]",100.0,"{""AOR"": 4}",4,0,{},4,"{""AOR"": 4}",0,{},4,4,0,0,0,0,1,3,0
+task_101,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert words_string('a,b,c') == ['a', 'b', 'c']",100.0,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",4,0,{},4,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",0,{},4,4,0,0,0,0,0,0,0
+task_102,humaneval,mutap,zero_shot,deepseek-coder,11,0,0,"assert choose_num(7, 9) == 8
+assert choose_num(5, 6) == 6
+assert choose_num(6, 6) == 6
+assert choose_num(4, 3) == -1",84.61538461538461,"{""AOD"": 2, ""AOR"": 4, ""COI"": 3, ""ROR"": 4}",13,2,"{""AOD"": 1, ""AOR"": 1}",11,"{""AOD"": 1, ""AOR"": 3, ""COI"": 3, ""ROR"": 4}",0,{},43,43,18,0,0,0,11,34,0
+task_103,humaneval,mutap,zero_shot,deepseek-coder,3,0,0,"assert rounded_avg(2, 5) == '0b100'
+assert rounded_avg(-1, -6) == -1
+assert rounded_avg(0, 0) == '0b0'",100.0,"{""AOD"": 1, ""AOR"": 6, ""ASR"": 1, ""COI"": 1, ""ROR"": 2}",11,0,{},11,"{""AOD"": 1, ""AOR"": 6, ""ASR"": 1, ""COI"": 1, ""ROR"": 2}",0,{},11,11,1,0,0,0,3,10,0
+task_104,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert unique_digits([2, 3, 5]) == [3, 5]",100.0,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",3,0,{},3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,2,0
+task_105,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert by_length([10, 20, 30, 40, 50, 60, 70, 80, 90]) == []",100.0,"{""EHD"": 1}",1,0,{},1,"{""EHD"": 1}",0,{},2,2,0,0,0,0,0,0,0
+task_106,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert f(5) == [1, 2, 6, 24, 15]",100.0,"{""AOR"": 4, ""ASR"": 6, ""COI"": 1, ""ROR"": 1}",12,0,{},10,"{""AOR"": 4, ""ASR"": 4, ""COI"": 1, ""ROR"": 1}",2,"{""ASR"": 2}",2,2,0,0,0,0,1,2,0
+task_107,humaneval,mutap,zero_shot,deepseek-coder,2,0,0,"assert even_odd_palindrome(100) == (8, 10)",100.0,"{""AOD"": 1, ""AOR"": 4, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",15,0,{},15,"{""AOD"": 1, ""AOR"": 4, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",0,{},4,4,1,0,0,0,2,4,0
+task_108,humaneval,mutap,zero_shot,deepseek-coder,11,0,0,"assert count_nums([0, 0, -5]) == 0
+assert count_nums([-12345, 0, -98765, 12345]) == 3",80.0,"{""AOD"": 2, ""AOR"": 8, ""COI"": 1, ""ROR"": 4}",15,3,"{""AOR"": 2, ""ROR"": 1}",12,"{""AOD"": 2, ""AOR"": 6, ""COI"": 1, ""ROR"": 3}",0,{},41,41,20,0,0,0,9,13,0
+task_109,humaneval,mutap,zero_shot,deepseek-coder,11,7,0,"assert move_one_ball([3, 4, 5, 6, 7, 8, 9, 0, 1, 2]) == True
+assert move_one_ball([]) == True",75.0,"{""AOR"": 1, ""COI"": 2, ""ROR"": 2, ""SIR"": 3}",8,2,"{""SIR"": 2}",5,"{""COI"": 2, ""ROR"": 2, ""SIR"": 1}",1,"{""AOR"": 1}",40,40,26,0,0,0,11,13,0
+task_11,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert string_xor('0', '1') == '1'",100.0,"{""COI"": 1, ""ROR"": 1}",2,0,{},2,"{""COI"": 1, ""ROR"": 1}",0,{},4,4,0,0,0,0,0,0,0
+task_110,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert exchange([1, 2, 3], [4, 5, 7]) == 'NO'
+assert exchange([1, 2, 3], [4, 5, 6]) == 'YES'",100.0,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",11,0,{},11,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",0,{},2,2,0,0,0,0,0,0,0
+task_111,humaneval,mutap,zero_shot,deepseek-coder,11,1,0,assert histogram('a b a c d e f g h i j k l m n o p q r s t u v w x y z ') == {'a': 2},80.0,"{""COI"": 3, ""LCR"": 1, ""ROR"": 6}",10,2,"{""ROR"": 2}",8,"{""COI"": 3, ""LCR"": 1, ""ROR"": 4}",0,{},10,10,1,0,0,0,3,5,0
+task_112,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert reverse_delete('abc', '') == ('abc', False)",100.0,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",5,0,{},5,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",0,{},3,3,0,0,0,0,0,0,0
+task_113,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert odd_count([[1, 2, 3], [3, 4, 5]]) == ['the number of odd elements 2n the str2ng 2 of the 2nput.', 'the number of odd elements 2n the str2ng 2 of the 2nput.']",100.0,"{""AOR"": 9, ""ROR"": 1}",10,0,{},2,"{""AOR"": 1, ""ROR"": 1}",8,"{""AOR"": 8}",2,2,0,0,0,0,1,2,0
+task_114,humaneval,mutap,zero_shot,deepseek-coder,11,4,0,"assert minSubArraySum([1, 2, 3]) == 1
+assert minSubArraySum([-1, -2, -3]) == -6",91.66666666666666,"{""AOD"": 3, ""AOR"": 3, ""ASR"": 1, ""COI"": 2, ""ROR"": 3}",12,1,"{""ROR"": 1}",11,"{""AOD"": 3, ""AOR"": 3, ""ASR"": 1, ""COI"": 2, ""ROR"": 2}",0,{},12,11,3,0,0,0,3,10,1
+task_115,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,"assert max_fill([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2) == 5",100.0,"{""AOR"": 2}",2,0,{},2,"{""AOR"": 2}",0,{},3,3,0,0,0,0,0,0,0
+task_0,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert has_close_elements([1, 3], 0.5) == False",66.66666666666666,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,2,"{""AOR"": 1, ""ROR"": 1}",4,"{""COI"": 2, ""ROR"": 2}",0,{},3,3,0,0,0,0,1,2,0
+task_1,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,assert separate_paren_groups('(()())') == ['(()())'],100.0,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",8,0,{},8,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",0,{},3,3,0,0,0,0,0,0,0
+task_10,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,assert make_palindrome('ab') == 'aba',73.33333333333333,"{""AOD"": 2, ""AOR"": 3, ""ASR"": 1, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 4}",15,4,"{""AOD"": 1, ""AOR"": 1, ""ASR"": 1, ""SIR"": 1}",6,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""COI"": 1, ""SIR"": 2}",5,"{""AOR"": 1, ""COD"": 1, ""COI"": 1, ""ROR"": 1, ""SIR"": 1}",4,4,0,0,0,0,0,0,0
+task_100,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert make_a_pile(2) == [2, 4]",100.0,"{""AOR"": 4}",4,0,{},4,"{""AOR"": 4}",0,{},4,4,0,0,0,0,1,3,0
+task_101,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert words_string('hello, world') == ['hello', 'world']",100.0,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",4,0,{},4,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",0,{},3,3,0,0,0,0,0,0,0
+task_102,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert choose_num(3, 5) == 4
+assert choose_num(2, 6) == 6",61.53846153846154,"{""AOD"": 2, ""AOR"": 4, ""COI"": 3, ""ROR"": 4}",13,5,"{""AOD"": 2, ""AOR"": 2, ""ROR"": 1}",8,"{""AOR"": 2, ""COI"": 3, ""ROR"": 3}",0,{},3,3,0,0,0,0,1,1,0
+task_103,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert rounded_avg(3, 5) == '0b100'",63.63636363636363,"{""AOD"": 1, ""AOR"": 6, ""ASR"": 1, ""COI"": 1, ""ROR"": 2}",11,4,"{""AOD"": 1, ""AOR"": 2, ""ROR"": 1}",7,"{""AOR"": 4, ""ASR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+task_104,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert unique_digits([13, 2567890]) == [13]",100.0,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",3,0,{},3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,1,0
+task_105,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert by_length([10, 23, 45, 67, 89]) == []",100.0,"{""EHD"": 1}",1,0,{},1,"{""EHD"": 1}",0,{},2,2,0,0,0,0,0,0,0
+task_106,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert f(5) == [1, 2, 6, 24, 15]",100.0,"{""AOR"": 4, ""ASR"": 6, ""COI"": 1, ""ROR"": 1}",12,0,{},10,"{""AOR"": 4, ""ASR"": 4, ""COI"": 1, ""ROR"": 1}",2,"{""ASR"": 2}",2,2,0,0,0,0,1,2,0
+task_107,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert even_odd_palindrome(20) == (4, 6)",93.33333333333333,"{""AOD"": 1, ""AOR"": 4, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",15,1,"{""AOR"": 1}",14,"{""AOD"": 1, ""AOR"": 3, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",0,{},1,1,0,0,0,0,1,1,0
+task_108,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert count_nums([-12345, 0, 12345]) == 2",60.0,"{""AOD"": 2, ""AOR"": 8, ""COI"": 1, ""ROR"": 4}",15,6,"{""AOD"": 1, ""AOR"": 4, ""ROR"": 1}",9,"{""AOD"": 1, ""AOR"": 4, ""COI"": 1, ""ROR"": 3}",0,{},4,4,0,0,0,0,1,1,0
+task_109,humaneval,after_refining,zero_shot,deepseek-coder,1,3,0,"assert move_one_ball([4, 5, 6, 7, 8, 9, 0, 1, 2, 3]) == True
+assert move_one_ball([3, 2, 1]) == False",75.0,"{""AOR"": 1, ""COI"": 2, ""ROR"": 2, ""SIR"": 3}",8,2,"{""SIR"": 2}",5,"{""COI"": 2, ""ROR"": 2, ""SIR"": 1}",1,"{""AOR"": 1}",3,3,0,0,0,0,1,2,0
+task_11,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert string_xor('0', '0') == '0'",100.0,"{""COI"": 1, ""ROR"": 1}",2,0,{},2,"{""COI"": 1, ""ROR"": 1}",0,{},4,4,0,0,0,0,0,0,0
+task_110,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert exchange([2, 4, 6], [1, 3, 5]) == 'YES'",36.36363636363637,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",11,7,"{""AOR"": 2, ""ASR"": 2, ""COI"": 1, ""ROR"": 2}",4,"{""COI"": 2, ""ROR"": 2}",0,{},3,3,0,0,0,0,1,1,0
+task_111,humaneval,after_refining,zero_shot,deepseek-coder,1,2,0,assert histogram('hello hello world') == {'hello': 2},80.0,"{""COI"": 3, ""LCR"": 1, ""ROR"": 6}",10,2,"{""ROR"": 2}",8,"{""COI"": 3, ""LCR"": 1, ""ROR"": 4}",0,{},3,3,0,0,0,0,1,2,0
+task_112,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert reverse_delete('abcd', '') == ('abcd', False)",100.0,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",5,0,{},5,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",0,{},3,3,0,0,0,0,1,2,0
+task_113,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert odd_count([[1, 2], [3, 4]]) == ['the number of odd elements 1n the str1ng 1 of the 1nput.', 'the number of odd elements 1n the str1ng 1 of the 1nput.']",90.0,"{""AOR"": 9, ""ROR"": 1}",10,1,"{""ROR"": 1}",1,"{""AOR"": 1}",8,"{""AOR"": 8}",2,2,0,0,0,0,1,1,0
+task_114,humaneval,after_refining,zero_shot,deepseek-coder,1,3,0,"assert minSubArraySum([1, 2, 3]) == 1
+assert minSubArraySum([-1, -2, -3]) == -6",91.66666666666666,"{""AOD"": 3, ""AOR"": 3, ""ASR"": 1, ""COI"": 2, ""ROR"": 3}",12,1,"{""ROR"": 1}",11,"{""AOD"": 3, ""AOR"": 3, ""ASR"": 1, ""COI"": 2, ""ROR"": 2}",0,{},4,4,0,0,0,0,1,3,0
+task_115,humaneval,after_refining,zero_shot,deepseek-coder,1,0,0,"assert max_fill([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2) == 5",100.0,"{""AOR"": 2}",2,0,{},2,"{""AOR"": 2}",0,{},3,3,0,0,0,0,0,0,0
+task_0,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_1,humaneval,before_refining,zero_shot,deepseek-coder,1,0,0,"assert separate_paren_groups(""(()())"") == [""(()())""]
+assert separate_paren_groups(""(()())(())"") == [""(()())"", ""(())""]
+assert separate_paren_groups(""(()())(())(()(()))"") == [""(()())"", ""(())"", ""(()(()))""]",100.0,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",8,0,{},8,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",0,{},3,0,0,0,0,0,0,0,0
+task_10,humaneval,before_refining,zero_shot,deepseek-coder,1,0,0,"assert make_palindrome('') == ''
+assert make_palindrome('a') == 'a'
+assert make_palindrome('ab') == 'aba'
+assert make_palindrome('abcba') == 'abcba'",73.33333333333333,"{""AOD"": 2, ""AOR"": 3, ""ASR"": 1, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 4}",15,4,"{""AOD"": 1, ""AOR"": 1, ""ASR"": 1, ""SIR"": 1}",6,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""COI"": 1, ""SIR"": 2}",5,"{""AOR"": 1, ""COD"": 1, ""COI"": 1, ""ROR"": 1, ""SIR"": 1}",4,0,0,0,0,0,0,0,0
+task_100,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+task_101,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+task_102,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+task_103,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+task_104,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},2,0,0,0,0,0,0,0,0
+task_105,humaneval,before_refining,zero_shot,deepseek-coder,1,1,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_106,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},2,0,0,0,0,0,0,0,0
+task_107,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},1,0,0,0,0,0,0,0,0
+task_108,humaneval,before_refining,zero_shot,deepseek-coder,1,0,0,"assert count_nums([12345]) == 1
+assert count_nums([-12345, 0, -98765]) == 2
+assert count_nums([]) == 0
+assert count_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) == 10",60.0,"{""AOD"": 2, ""AOR"": 8, ""COI"": 1, ""ROR"": 4}",15,6,"{""AOD"": 1, ""AOR"": 4, ""ROR"": 1}",9,"{""AOD"": 1, ""AOR"": 4, ""COI"": 1, ""ROR"": 3}",0,{},4,0,0,0,0,0,0,0,0
+task_109,humaneval,before_refining,zero_shot,deepseek-coder,1,6,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_11,humaneval,before_refining,zero_shot,deepseek-coder,1,0,0,"assert string_xor('0', '0') == '0'
+assert string_xor('1', '1') == '0'
+assert string_xor('1', '0') == '1'
+assert string_xor('0', '1') == '1'",100.0,"{""COI"": 1, ""ROR"": 1}",2,0,{},2,"{""COI"": 1, ""ROR"": 1}",0,{},4,0,0,0,0,0,0,0,0
+task_110,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_111,humaneval,before_refining,zero_shot,deepseek-coder,1,2,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_112,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_113,humaneval,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},2,0,0,0,0,0,0,0,0
+task_114,humaneval,before_refining,zero_shot,deepseek-coder,1,2,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+task_115,humaneval,before_refining,zero_shot,deepseek-coder,1,0,0,"assert max_fill([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6
+assert max_fill([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5
+assert max_fill([[0,0,0], [0,0,0]], 5) == 0",100.0,"{""AOR"": 2}",2,0,{},2,"{""AOR"": 2}",0,{},3,0,0,0,0,0,0,0,0
+task_92,humaneval,mutap,zero_shot,deepseek-coder,11,1,0,"assert any_int(1, 2, 3) == True
+assert any_int(1, 2, 4) == False
+assert any_int(1.0, 2, 3) == False",80.0,"{""AOR"": 3, ""COI"": 2, ""LCR"": 2, ""ROR"": 3}",10,2,"{""AOR"": 2}",7,"{""AOR"": 1, ""COI"": 2, ""LCR"": 1, ""ROR"": 3}",1,"{""LCR"": 1}",43,43,28,0,0,0,0,0,0
+task_0,humaneval,mutap,zero_shot,deepseek-coder,11,0,0,"assert has_close_elements([1, 3], 0.5) == False
+assert has_close_elements([1, 3], 2) == False",83.33333333333334,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,1,"{""AOR"": 1}",5,"{""COI"": 2, ""ROR"": 3}",0,{},32,32,20,0,0,0,11,16,0
+task_0,humaneval,mutap,zero_shot,deepseek-coder,2,0,0,"assert has_close_elements([1.0, 3.0, 5.0], 2) == False
+assert has_close_elements([1.0, 3.0], 4) == True",100.0,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,0,{},6,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",0,{},7,7,0,0,0,0,1,1,0
+task_1,humaneval,mutap,zero_shot,deepseek-coder,1,0,0,assert separate_paren_groups('(()())') == ['(()())'],100.0,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",8,0,{},8,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",0,{},3,3,0,0,0,0,0,0,0
+task_10,humaneval,mutap,zero_shot,deepseek-coder,11,0,0,assert make_palindrome('abc') == 'abcba',93.33333333333333,"{""AOD"": 2, ""AOR"": 3, ""ASR"": 1, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 4}",15,1,"{""ASR"": 1}",9,"{""AOD"": 2, ""AOR"": 2, ""COD"": 1, ""COI"": 1, ""SIR"": 3}",5,"{""AOR"": 1, ""COD"": 1, ""COI"": 1, ""ROR"": 1, ""SIR"": 1}",44,44,39,0,0,0,4,4,0
+task_0,humaneval,mutap,zero_shot,deepseek-coder,5,0,0,"assert has_close_elements([1, 3], 0.5) == False
+assert has_close_elements([1, 3], 2) == False
+assert has_close_elements([10, 9.8], 0.2) == True",100.0,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,0,{},6,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",0,{},15,15,7,0,0,0,5,6,0

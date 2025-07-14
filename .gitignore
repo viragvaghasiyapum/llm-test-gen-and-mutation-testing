@@ -3,22 +3,19 @@ docs/
 /*/src
 /*/.vscode
 **/__pycache__/
-/deepseek-coder/data/humaneval/human_eval_full.md
-/deepseek-coder/data/humaneval/human-eval-v2-20210705.jsonl
-/deepseek-coder/data/refactory/*
-/deepseek-coder/output/humaneval/formatted/*
-/deepseek-coder/tmp/
-/data.zip
-/Untitled-1.py
-/what is unit testing.md
-/deepseek-coder.zip
-/code-reference/*
-/deepseek-coder_recovered.zip
-/deepseek-code-recovered
-/deepseek-coder (2)
-/output/*
-/deepseek-coder-old
-/deepseek-coder-old.zip
-/data/*
+/other_seminar_files.zip
 
-deepseek-coder/output
+/data/
+llm_mutap/data/humaneval/human_eval_full.md
+llm_mutap/data/refactory/question_1
+llm_mutap/data/refactory/question_2
+llm_mutap/data/refactory/question_3
+llm_mutap/data/refactory/question_4
+llm_mutap/data/refactory/question_5
+llm_mutap/scripts/.process_human_eval.py.swp
+
+llm_mutap/output/humaneval/formatted
+llm_mutap/output/refactory/formatted
+llm_mutap/output/refactory/analysis_reports/buggy_code_run
+
+llm_mutap/tmp

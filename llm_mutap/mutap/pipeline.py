@@ -1,5 +1,5 @@
 from mutap.algorithms.prompting import build_prompts
-from mutap.algorithms.test_generation import prompt_deepseek_llmc
+from mutap.algorithms.test_generation import prompt_llmc
 from mutap.algorithms.refinement import refine_test_cases
 from mutap.algorithms.mutation_testing import run_mutation_testing
 from mutap.algorithms.augmentation import augmentation_process
@@ -66,7 +66,7 @@ def run_pipeline(limit: dict, prompt_type: str, llm: str, method: str, dataset: 
                 print(f"{task_id} -> subrun {initial_test_run}: generating raw test cases")
 
                 # Raw Testcase Generation
-                raw_initial_unit_test = prompt_deepseek_llmc(initial_prompt, putcode_functions)
+                raw_initial_unit_test = prompt_llmc(initial_prompt, putcode_functions)
                 helper.writeReportLog('initial_raw_tests.log', 'testcases', 'raw initial unit tests (raw_IUT) with 10 subruns, last successful output will be considered 0th raw initial unit test', raw_initial_unit_test, task_id, initial_test_run)
                 if not raw_initial_unit_test:
                     continue

@@ -96,13 +96,13 @@ def refactory_test_buggy_versions(unit_tests, functions):
             test_result = run_tests_with_timeout(test_file_path, timeout=60, report_file=report_file)
 
             if test_result in ["fail", "timeout"]:
-                csv_row['killed'] = 1
                 print("✅ Test caught the bug")
                 if test_result == "timeout":
-
                     helper.write_buggy_report(f"\ntimeout case\n", report_file)
                     csv_row['timeout'] = 1
                     print("⏱️ Execution timed out (likely infinite loop)")
+                else:
+                    csv_row['killed'] = 1
             elif test_result == "pass":
                 helper.write_buggy_report(f"\nsurvived\n", report_file)
                 csv_row['survived'] = 1

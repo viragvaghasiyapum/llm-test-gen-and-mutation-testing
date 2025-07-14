@@ -1,0 +1,79 @@
+task_id,dataset,method,prompt,llm,run,subrun,problematic_put,final_tests,mutation_score,mutation_types,total_mutants,survived_total,survived_types,killed_total,killed_types,timeout_total,timeout_types,raw_tests_generated,refined_tests,duplicate_tests_removed,syntax_errored,fixed_by_model,fixed_by_ommiting,ibf_assertion_errored,ibf_repaired,ibf_unrepaired
+task_0,humaneval,mutap,zero_shot,llama2chat,11,0,0,"assert has_close_elements([1.0, 2.0, 3.0], 1.0) == False
+assert has_close_elements([1.0, 2.0, 3.0], 1.5) == True",100.0,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,0,{},6,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",0,{},74,74,30,0,0,0,5,11,0
+task_1,humaneval,mutap,zero_shot,llama2chat,1,1,0,assert separate_paren_groups('(()())') == ['(()())'],100.0,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",8,0,{},8,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",0,{},8,8,0,0,0,0,1,8,0
+task_10,humaneval,mutap,zero_shot,llama2chat,11,0,0,assert make_palindrome('leveL') == 'leveLevel',93.33333333333333,"{""AOD"": 2, ""AOR"": 3, ""ASR"": 1, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 4}",15,1,"{""ASR"": 1}",12,"{""AOD"": 2, ""AOR"": 2, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 3}",2,"{""AOR"": 1, ""SIR"": 1}",183,183,163,0,0,0,9,26,0
+task_100,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert make_a_pile(3) == [3, 5, 7]",100.0,"{""AOR"": 4}",4,0,{},4,"{""AOR"": 4}",0,{},3,3,0,0,0,0,1,3,0
+task_101,humaneval,mutap,zero_shot,llama2chat,1,0,0,assert words_string('a') == ['a'],100.0,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",4,0,{},4,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",0,{},4,4,0,0,0,0,0,0,0
+task_102,humaneval,mutap,zero_shot,llama2chat,11,0,0,"assert choose_num(5, 7) == 6
+assert choose_num(3, 4) == 4
+assert choose_num(0, 0) == 0",69.23076923076923,"{""AOD"": 2, ""AOR"": 4, ""COI"": 3, ""ROR"": 4}",13,4,"{""AOD"": 2, ""AOR"": 2}",9,"{""AOR"": 2, ""COI"": 3, ""ROR"": 4}",0,{},98,98,82,0,0,0,11,61,0
+task_103,humaneval,mutap,zero_shot,llama2chat,2,0,0,"assert rounded_avg(3, 4) == '0b100'
+assert rounded_avg(3, 3) == '0b11'
+assert rounded_avg(3, 2) == -1",100.0,"{""AOD"": 1, ""AOR"": 6, ""ASR"": 1, ""COI"": 1, ""ROR"": 2}",11,0,{},11,"{""AOD"": 1, ""AOR"": 6, ""ASR"": 1, ""COI"": 1, ""ROR"": 2}",0,{},18,18,3,0,0,0,2,12,0
+task_104,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert unique_digits('123') == ['1', '3']",100.0,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",3,0,{},3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},6,4,0,0,0,0,1,3,2
+task_105,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert by_length([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) == ['Nine', 'Eight', 'Seven', 'Six', 'Five', 'Four', 'Three', 'Two', 'One']",100.0,"{""EHD"": 1}",1,0,{},1,"{""EHD"": 1}",0,{},3,3,0,0,0,0,1,2,0
+task_106,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert f(2) == [1, 2]",100.0,"{""AOR"": 4, ""ASR"": 6, ""COI"": 1, ""ROR"": 1}",12,0,{},10,"{""AOR"": 4, ""ASR"": 4, ""COI"": 1, ""ROR"": 1}",2,"{""ASR"": 2}",3,3,0,0,0,0,1,2,0
+task_107,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert even_odd_palindrome(10) == (4, 5)",100.0,"{""AOD"": 1, ""AOR"": 4, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",15,0,{},15,"{""AOD"": 1, ""AOR"": 4, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+task_108,humaneval,mutap,zero_shot,llama2chat,11,0,0,"assert count_nums([-1, -2, -3]) == 0",66.66666666666666,"{""AOD"": 2, ""AOR"": 8, ""COI"": 1, ""ROR"": 4}",15,5,"{""AOR"": 3, ""ROR"": 2}",10,"{""AOD"": 2, ""AOR"": 5, ""COI"": 1, ""ROR"": 2}",0,{},117,117,92,0,0,0,4,6,0
+task_109,humaneval,mutap,zero_shot,llama2chat,11,0,0,"assert move_one_ball([1, 2, 3]) == True",37.5,"{""AOR"": 1, ""COI"": 2, ""ROR"": 2, ""SIR"": 3}",8,5,"{""COI"": 1, ""ROR"": 1, ""SIR"": 3}",2,"{""COI"": 1, ""ROR"": 1}",1,"{""AOR"": 1}",83,83,73,0,0,0,11,79,0
+task_11,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert string_xor('hello', 'world') == '11101'",100.0,"{""COI"": 1, ""ROR"": 1}",2,0,{},2,"{""COI"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+task_110,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert exchange([1, 2, 3, 4, 5], [7, 8, 9, 10, 11]) == 'NO'
+assert exchange([1, 2, 3, 4, 5], [6, 7, 8, 9, 10]) == 'YES'",100.0,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",11,0,{},11,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",0,{},3,3,0,0,0,0,0,0,0
+task_111,humaneval,mutap,zero_shot,llama2chat,11,0,0,assert histogram('   hello    ') == {'hello': 1},80.0,"{""COI"": 3, ""LCR"": 1, ""ROR"": 6}",10,2,"{""ROR"": 2}",8,"{""COI"": 3, ""LCR"": 1, ""ROR"": 4}",0,{},72,71,45,0,0,0,11,42,1
+task_112,humaneval,mutap,zero_shot,llama2chat,1,0,0,"assert reverse_delete('hello', 'l') == ('heo', False)",100.0,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",5,0,{},5,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",0,{},11,11,0,0,0,0,1,11,0
+task_113,humaneval,mutap,zero_shot,llama2chat,1,10,1,,0.0,{},0,0,{},0,{},0,{},43,0,0,0,0,0,11,0,43
+task_114,humaneval,mutap,zero_shot,llama2chat,11,0,0,"assert minSubArraySum([-2, -1, -1]) == -4
+assert minSubArraySum([1, 2, 3]) == 1",91.66666666666666,"{""AOD"": 3, ""AOR"": 3, ""ASR"": 1, ""COI"": 2, ""ROR"": 3}",12,1,"{""ROR"": 1}",11,"{""AOD"": 3, ""AOR"": 3, ""ASR"": 1, ""COI"": 2, ""ROR"": 2}",0,{},88,88,75,0,0,0,10,53,0
+task_115,humaneval,mutap,zero_shot,llama2chat,2,0,0,"assert max_fill([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 2) == 4",100.0,"{""AOR"": 2}",2,0,{},2,"{""AOR"": 2}",0,{},5,4,0,0,0,0,2,2,1
+task_0,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert has_close_elements([1.0, 2.0, 3.0], 0.5) == False
+assert has_close_elements([1.0, 2.0, 3.0], 1.5) == True",83.33333333333334,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,1,"{""ROR"": 1}",5,"{""AOR"": 1, ""COI"": 2, ""ROR"": 2}",0,{},2,2,0,0,0,0,0,0,0
+task_1,humaneval,after_refining,zero_shot,llama2chat,1,0,0,assert separate_paren_groups('(()())') == ['(()())'],100.0,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",8,0,{},8,"{""ASR"": 2, ""COI"": 3, ""ROR"": 3}",0,{},7,7,0,0,0,0,1,7,0
+task_10,humaneval,after_refining,zero_shot,llama2chat,1,0,0,assert make_palindrome('racecar') == 'racecar',46.666666666666664,"{""AOD"": 2, ""AOR"": 3, ""ASR"": 1, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 4}",15,8,"{""AOD"": 2, ""AOR"": 2, ""ASR"": 1, ""SIR"": 3}",6,"{""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 1}",1,"{""AOR"": 1}",2,2,0,0,0,0,0,0,0
+task_100,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert make_a_pile(3) == [3, 5, 7]",100.0,"{""AOR"": 4}",4,0,{},4,"{""AOR"": 4}",0,{},4,4,0,0,0,0,1,4,0
+task_101,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert words_string('a,b,c') == ['a', 'b', 'c']",100.0,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",4,0,{},4,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",0,{},2,2,0,0,0,0,0,0,0
+task_102,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert choose_num(-2, 3) == 2
+assert choose_num(3, 4) == 4
+assert choose_num(0, 0) == 0",69.23076923076923,"{""AOD"": 2, ""AOR"": 4, ""COI"": 3, ""ROR"": 4}",13,4,"{""AOD"": 2, ""AOR"": 2}",9,"{""AOR"": 2, ""COI"": 3, ""ROR"": 4}",0,{},4,4,0,0,0,0,1,2,0
+task_103,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert rounded_avg(3, 5) == '0b100'",63.63636363636363,"{""AOD"": 1, ""AOR"": 6, ""ASR"": 1, ""COI"": 1, ""ROR"": 2}",11,4,"{""AOD"": 1, ""AOR"": 2, ""ROR"": 1}",7,"{""AOR"": 4, ""ASR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+task_104,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert unique_digits('123') == ['1', '3']",100.0,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",3,0,{},3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},17,17,0,0,0,0,1,15,0
+task_105,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert by_length([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) == ['Nine', 'Eight', 'Seven', 'Six', 'Five', 'Four', 'Three', 'Two', 'One']",100.0,"{""EHD"": 1}",1,0,{},1,"{""EHD"": 1}",0,{},3,3,0,0,0,0,1,2,0
+task_106,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert f(2) == [1, 2]",100.0,"{""AOR"": 4, ""ASR"": 6, ""COI"": 1, ""ROR"": 1}",12,0,{},10,"{""AOR"": 4, ""ASR"": 4, ""COI"": 1, ""ROR"": 1}",2,"{""ASR"": 2}",3,3,0,0,0,0,1,3,0
+task_107,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert even_odd_palindrome(10) == (4, 5)",100.0,"{""AOD"": 1, ""AOR"": 4, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",15,0,{},15,"{""AOD"": 1, ""AOR"": 4, ""ASR"": 2, ""COI"": 2, ""LCR"": 2, ""ROR"": 3, ""SIR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+task_108,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert count_nums([-1, -2, -3]) == 0",66.66666666666666,"{""AOD"": 2, ""AOR"": 8, ""COI"": 1, ""ROR"": 4}",15,5,"{""AOR"": 3, ""ROR"": 2}",10,"{""AOD"": 2, ""AOR"": 5, ""COI"": 1, ""ROR"": 2}",0,{},3,3,0,0,0,0,1,1,0
+task_109,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert move_one_ball([1, 2, 3]) == True",37.5,"{""AOR"": 1, ""COI"": 2, ""ROR"": 2, ""SIR"": 3}",8,5,"{""COI"": 1, ""ROR"": 1, ""SIR"": 3}",2,"{""COI"": 1, ""ROR"": 1}",1,"{""AOR"": 1}",9,9,0,0,0,0,1,4,0
+task_11,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert string_xor('hello', 'world') == '11101'",100.0,"{""COI"": 1, ""ROR"": 1}",2,0,{},2,"{""COI"": 1, ""ROR"": 1}",0,{},5,5,0,0,0,0,1,3,0
+task_110,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert exchange([1, 2, 3, 4, 5], [7, 8, 9, 10, 11]) == 'NO'
+assert exchange([1, 2, 3, 4, 5], [6, 7, 8, 9, 10]) == 'YES'",100.0,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",11,0,{},11,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",0,{},3,3,0,0,0,0,0,0,0
+task_111,humaneval,after_refining,zero_shot,llama2chat,1,0,0,assert histogram('   hello    ') == {'hello': 1},80.0,"{""COI"": 3, ""LCR"": 1, ""ROR"": 6}",10,2,"{""ROR"": 2}",8,"{""COI"": 3, ""LCR"": 1, ""ROR"": 4}",0,{},9,9,0,0,0,0,1,9,0
+task_112,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert reverse_delete('hello', 'l') == ('heo', False)",100.0,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",5,0,{},5,"{""AOD"": 1, ""AOR"": 1, ""COD"": 1, ""ROR"": 1, ""SIR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+task_113,humaneval,after_refining,zero_shot,llama2chat,1,10,1,,0.0,{},0,0,{},0,{},0,{},42,0,0,0,0,0,11,0,42
+task_114,humaneval,after_refining,zero_shot,llama2chat,1,0,0,"assert minSubArraySum([-2, -1, -4]) == -7",75.0,"{""AOD"": 3, ""AOR"": 3, ""ASR"": 1, ""COI"": 2, ""ROR"": 3}",12,3,"{""AOD"": 1, ""AOR"": 1, ""ROR"": 1}",9,"{""AOD"": 2, ""AOR"": 2, ""ASR"": 1, ""COI"": 2, ""ROR"": 2}",0,{},16,16,0,0,0,0,1,15,0
+task_115,humaneval,after_refining,zero_shot,llama2chat,1,0,0,,0.0,"{""AOR"": 2}",2,2,"{""AOR"": 2}",0,{},0,{},3,3,0,0,0,0,1,1,0
+task_0,humaneval,before_refining,zero_shot,llama2chat,1,0,0,"assert has_close_elements([1.0, 2.0, 3.0], 1.5) == True
+assert has_close_elements([1.0, 2.0, 3.0], 0.5) == False",83.33333333333334,"{""AOR"": 1, ""COI"": 2, ""ROR"": 3}",6,1,"{""ROR"": 1}",5,"{""AOR"": 1, ""COI"": 2, ""ROR"": 2}",0,{},2,0,0,0,0,0,0,0,0
+task_1,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},6,0,0,0,0,0,0,0,0
+task_10,humaneval,before_refining,zero_shot,llama2chat,1,0,0,"assert is_palindrome(""racecar"") == True
+assert make_palindrome(""racecar"") == ""racecar""",46.666666666666664,"{""AOD"": 2, ""AOR"": 3, ""ASR"": 1, ""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 4}",15,8,"{""AOD"": 2, ""AOR"": 2, ""ASR"": 1, ""SIR"": 3}",6,"{""COD"": 2, ""COI"": 2, ""ROR"": 1, ""SIR"": 1}",1,"{""AOR"": 1}",2,0,0,0,0,0,0,0,0
+task_100,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_101,humaneval,before_refining,zero_shot,llama2chat,1,0,0,"assert words_string("""") == []
+assert words_string(""a,b"") == [""a"", ""b""]
+assert words_string(""a , b"") == [""a"", ""b""]
+assert words_string(""a,b,c"") == [""a"", ""b"", ""c""]",100.0,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",4,0,{},4,"{""COD"": 1, ""COI"": 2, ""ROR"": 1}",0,{},4,0,0,0,0,0,0,0,0
+task_102,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+task_103,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_104,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},5,0,0,0,0,0,0,0,0
+task_105,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},2,0,0,0,0,0,0,0,0
+task_106,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_107,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_108,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_109,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},7,0,0,0,0,0,0,0,0
+task_11,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_110,humaneval,before_refining,zero_shot,llama2chat,1,0,0,"assert exchange([1, 2, 3, 4, 5], [6, 7, 8, 9, 10]) == ""YES""
+assert exchange([1, 2, 3, 4, 5], [7, 8, 9, 10, 11]) == ""NO""
+assert exchange([1, 2, 3, 4, 5], [4, 5, 6, 7, 8]) == ""YES""",100.0,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",11,0,{},11,"{""AOR"": 2, ""ASR"": 2, ""COI"": 3, ""ROR"": 4}",0,{},3,0,0,0,0,0,0,0,0
+task_111,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},6,0,0,0,0,0,0,0,0
+task_112,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},10,0,0,0,0,0,0,0,0
+task_113,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_114,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+task_115,humaneval,before_refining,zero_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0

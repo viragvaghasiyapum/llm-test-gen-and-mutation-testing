@@ -1,11 +1,11 @@
 version: "3.8"
 
 services:
-  deepseek-cli:
+  mutap-cli:
     build:
       context: .
       dockerfile: dockerfile 
-    container_name: deepseek-cli
+    container_name: mutap-cli
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
@@ -16,7 +16,6 @@ services:
       - ./scripts:/code/scripts
       - ./output:/code/output
       - ./main.py:/code/main.py
-      - ./test_pynguin:/code/test_pynguin
       - ./tmp:/code/tmp
     working_dir: /code
     command: ["/venv/bin/python", "main.py"]

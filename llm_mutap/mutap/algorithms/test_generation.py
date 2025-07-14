@@ -5,7 +5,7 @@ import mutap.utils.helper as helper
 import ast
 from mutap.utils.helper import GCD
     
-def prompt_deepseek_llmc(prompt: str, functions: list[str] = [], is_fix_prompt= False, tag = "test") -> str:
+def prompt_llmc(prompt: str, functions: list[str] = [], is_fix_prompt= False, tag = "test") -> str:
     
     output = ""
     try:
@@ -19,9 +19,9 @@ def prompt_deepseek_llmc(prompt: str, functions: list[str] = [], is_fix_prompt= 
         ], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
         
         full_output = process.stdout.read()
-        helper.writeTmpLog("\n-----------------------\n", "deepseek_llmc.log")
-        helper.writeTmpLog(full_output, "deepseek_llmc.log")
-        helper.writeTmpLog("\n-----------------------\n", "deepseek_llmc.log")
+        helper.writeTmpLog("\n-----------------------\n", "llmc.log")
+        helper.writeTmpLog(full_output, "llmc.log")
+        helper.writeTmpLog("\n-----------------------\n", "llmc.log")
         
         raw_output = ''
         if GCD.llm == 'llama2chat':

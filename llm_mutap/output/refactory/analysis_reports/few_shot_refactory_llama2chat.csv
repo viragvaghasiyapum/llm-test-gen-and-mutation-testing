@@ -1,0 +1,19 @@
+task_id,dataset,method,prompt,llm,run,subrun,problematic_put,final_tests,mutation_score,mutation_types,total_mutants,survived_total,survived_types,killed_total,killed_types,timeout_total,timeout_types,raw_tests_generated,refined_tests,duplicate_tests_removed,syntax_errored,fixed_by_model,fixed_by_ommiting,ibf_assertion_errored,ibf_repaired,ibf_unrepaired
+question_1,refactory,mutap,few_shot,llama2chat,1,10,1,,0.0,{},0,0,{},0,{},0,{},33,0,0,0,0,0,11,0,33
+question_2,refactory,mutap,few_shot,llama2chat,11,0,0,"assert unique_month(3, [('Alice', 'March')]) == False
+assert contains_unique_day(5, [('Alice', 'May'), ('Bob', 'June')]) == False
+assert unique_day(2, [('Alice', 'January'), ('Bob', 'February')]) == False",63.63636363636363,"{""ASR"": 2, ""COI"": 3, ""LCR"": 1, ""ROR"": 5}",11,4,"{""ASR"": 2, ""COI"": 1, ""ROR"": 1}",7,"{""COI"": 2, ""LCR"": 1, ""ROR"": 4}",0,{},33,33,30,0,0,0,11,18,0
+question_3,refactory,mutap,few_shot,llama2chat,1,0,0,"assert remove_extras([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]",100.0,"{""COD"": 1, ""COI"": 1}",2,0,{},2,"{""COD"": 1, ""COI"": 1}",0,{},3,3,0,0,0,0,1,3,0
+question_4,refactory,mutap,few_shot,llama2chat,11,0,0,"assert sort_age([('Alice', 25), ('Bob', 30), ('Charlie', 28)]) == [('Bob', 30), ('Charlie', 28), ('Alice', 25)]",60.0,"{""AOR"": 2, ""COI"": 1, ""ROR"": 2}",5,2,"{""AOR"": 1, ""ROR"": 1}",3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},13,13,5,0,0,0,2,4,0
+question_5,refactory,mutap,few_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,2,0,0,0,0,1,2,1
+question_1,refactory,after_refining,few_shot,llama2chat,1,10,1,,0.0,{},0,0,{},0,{},0,{},33,0,0,0,0,0,11,0,33
+question_2,refactory,after_refining,few_shot,llama2chat,1,0,0,"assert contains_unique_day(6, [('June 6',), ('August 6',)]) == False
+assert unique_month(5, [('May 5',), ('June 5',)]) == False",36.36363636363637,"{""ASR"": 2, ""COI"": 3, ""LCR"": 1, ""ROR"": 5}",11,7,"{""ASR"": 2, ""COI"": 2, ""ROR"": 3}",4,"{""COI"": 1, ""LCR"": 1, ""ROR"": 2}",0,{},3,2,0,0,0,0,1,2,1
+question_3,refactory,after_refining,few_shot,llama2chat,1,0,0,"assert remove_extras([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]",100.0,"{""COD"": 1, ""COI"": 1}",2,0,{},2,"{""COD"": 1, ""COI"": 1}",0,{},3,3,0,0,0,0,1,3,0
+question_4,refactory,after_refining,few_shot,llama2chat,1,0,0,"assert sort_age([('Alice', 25), ('Bob', 30), ('Charlie', 28)]) == [('Bob', 30), ('Charlie', 28), ('Alice', 25)]",60.0,"{""AOR"": 2, ""COI"": 1, ""ROR"": 2}",5,2,"{""AOR"": 1, ""ROR"": 1}",3,"{""AOR"": 1, ""COI"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,3,0
+question_5,refactory,after_refining,few_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,2,0,0,0,0,1,2,1
+question_1,refactory,before_refining,few_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+question_2,refactory,before_refining,few_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+question_3,refactory,before_refining,few_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+question_4,refactory,before_refining,few_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
+question_5,refactory,before_refining,few_shot,llama2chat,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0

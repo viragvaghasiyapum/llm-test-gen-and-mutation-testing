@@ -1,4 +1,4 @@
-from mutap.algorithms.test_generation import prompt_deepseek_llmc
+from mutap.algorithms.test_generation import prompt_llmc
 from mutap.algorithms.refinement import refine_test_cases
 from mutap.algorithms.mutation_testing import run_mutation_testing
 from mutap.algorithms.prompting import build_prompts
@@ -9,7 +9,8 @@ import re
 from mutap.utils.helper import GCD
 
 def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: str,
-                         initial_unit_test: list, lhs_fixed_unit_test: list, mutants: list, functions: list[str], task_id: str, run: int) -> list:
+                         initial_unit_test: list, lhs_fixed_unit_test: list, mutants: list,
+                         functions: list[str], task_id: str, run: int) -> list:
 
 
     try:
@@ -43,7 +44,7 @@ def augmentation_process(mutants_survived: int, put_code: str, initial_prompt: s
             augmented_prompt = build_prompts(mutant_code, 'augmentation_prompt', mutated_function, original_code=put_code, unit_tests=current_test_suite, only_lhs_fixed_unit_tests=current_lhs_fixed_unit_test)
             helper.writeReportLog('augmented_prompt.log', 'prompts', 'augmented prompts', augmented_prompt, task_id, allowed_run)
 
-            raw_aug_unit_test = prompt_deepseek_llmc(augmented_prompt, functions=functions)
+            raw_aug_unit_test = prompt_llmc(augmented_prompt, functions=functions)
             helper.writeReportLog('raw_augmented_tests.log', 'testcases', 'raw augmented unit tests', raw_aug_unit_test, task_id, allowed_run)
 
             if not raw_aug_unit_test:

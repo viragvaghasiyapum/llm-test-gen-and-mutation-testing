@@ -20,7 +20,7 @@ def syntax_fix(test: str, functions: list[str]) -> str:
         
         if fix:
             prompt = build_prompts(test, step='syntax_fix_prompt')
-            fixed_test = test_gen.prompt_deepseek_llmc(prompt, functions=functions, is_fix_prompt=True, tag='fixed')
+            fixed_test = test_gen.prompt_llmc(prompt, functions=functions, is_fix_prompt=True, tag='fixed')
             fixed_test = fixed_test.strip().splitlines()
             fixed_test = '\n'.join(fixed_test);
             llm_fixed = 1

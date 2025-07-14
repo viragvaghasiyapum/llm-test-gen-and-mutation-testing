@@ -1,7 +1,6 @@
 from mutap.pipeline import run_pipeline
 from scripts.dataset_formatter import process_humaneval, process_refactory
 import mutap.utils.helper as helper
-# from test_pynguin.pynguin_test import execute_pynguin_test
 import os
 
 def main():
@@ -49,14 +48,12 @@ def main():
         print("1. Before Refining")
         print("2. After Refining")
         print("3. Full MuTAP (mutation + prompt augmentation)")
-        print("4. Pynguin")
-        method_choice = input("✅ Enter method [1-4]: ").strip()
+        method_choice = input("✅ Enter method [1-3]: ").strip()
 
         method_map = {
             '1': 'before_refining',
             '2': 'after_refining',
-            '3': 'mutap',
-            '4': 'pynguin'
+            '3': 'mutap'
         }
         method = method_map.get(method_choice)
         if method is None:
@@ -134,109 +131,3 @@ def check_formatted_data_src_setup():
 if __name__ == '__main__':
     check_formatted_data_src_setup()
     main()
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'zero_shot',
-    #     'llama2chat',
-    #     'mutap',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'zero_shot',
-    #     'llama2chat',
-    #     'after_refining',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'zero_shot',
-    #     'llama2chat',
-    #     'before_refining',
-    #     'refactory'
-    # )
-
-    
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'few_shot',
-    #     'llama2chat',
-    #     'mutap',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'few_shot',
-    #     'llama2chat',
-    #     'after_refining',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'few_shot',
-    #     'llama2chat',
-    #     'before_refining',
-    #     'refactory'
-    # )
-
-
-
-
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'zero_shot',
-    #     'deepseek-coder',
-    #     'mutap',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'zero_shot',
-    #     'deepseek-coder',
-    #     'after_refining',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'zero_shot',
-    #     'deepseek-coder',
-    #     'before_refining',
-    #     'refactory'
-    # )
-
-    
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'few_shot',
-    #     'deepseek-coder',
-    #     'mutap',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'few_shot',
-    #     'deepseek-coder',
-    #     'after_refining',
-    #     'refactory'
-    # )
-
-    # run_pipeline(
-    #     {'type': 'all', 'value': None},
-    #     'few_shot',
-    #     'deepseek-coder',
-    #     'before_refining',
-    #     'refactory'
-    # )
-
-    print("\n\n run successful.")

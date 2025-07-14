@@ -1,0 +1,20 @@
+task_id,dataset,method,prompt,llm,run,subrun,problematic_put,final_tests,mutation_score,mutation_types,total_mutants,survived_total,survived_types,killed_total,killed_types,timeout_total,timeout_types,raw_tests_generated,refined_tests,duplicate_tests_removed,syntax_errored,fixed_by_model,fixed_by_ommiting,ibf_assertion_errored,ibf_repaired,ibf_unrepaired
+question_1,refactory,mutap,zero_shot,deepseek-coder,4,0,0,"assert search(2, [1, 2]) == 1",100.0,"{""COI"": 1, ""ROR"": 2}",3,0,{},3,"{""COI"": 1, ""ROR"": 2}",0,{},27,27,3,0,0,0,3,7,0
+question_2,refactory,mutap,zero_shot,deepseek-coder,10,0,0,"assert unique_month(2, [(3, 1), (4, 5), (6, 7), (2, 8)]) == True
+assert unique_day(2, [(3, 1), (4, 5), (6, 2)]) == True
+assert contains_unique_day(1, [['1', '2'], ['1', '5']]) == False",100.0,"{""ASR"": 2, ""COI"": 3, ""LCR"": 1, ""ROR"": 5}",11,0,{},11,"{""ASR"": 2, ""COI"": 3, ""LCR"": 1, ""ROR"": 5}",0,{},42,42,5,0,0,0,7,13,0
+question_3,refactory,mutap,zero_shot,deepseek-coder,1,0,0,"assert remove_extras([1, 2, 3]) == [1, 2, 3]",100.0,"{""COD"": 1, ""COI"": 1}",2,0,{},2,"{""COD"": 1, ""COI"": 1}",0,{},5,5,0,0,0,0,0,0,0
+question_4,refactory,mutap,zero_shot,deepseek-coder,11,0,0,"assert sort_age([('V', 25), ('L', 30), ('C', 25)]) == [('L', 30), ('V', 25), ('C', 25)]",80.0,"{""AOR"": 2, ""COI"": 1, ""ROR"": 2}",5,1,"{""AOR"": 1}",4,"{""AOR"": 1, ""COI"": 1, ""ROR"": 2}",0,{},26,26,6,0,0,0,7,7,0
+question_5,refactory,mutap,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,3,0,0,0,0,0,0,0
+question_1,refactory,after_refining,zero_shot,deepseek-coder,1,0,0,"assert search(-10, [-5, -3, -2, 4, 6, 7, 9]) == 0",66.66666666666666,"{""COI"": 1, ""ROR"": 2}",3,1,"{""ROR"": 1}",2,"{""COI"": 1, ""ROR"": 1}",0,{},4,4,0,0,0,0,1,1,0
+question_2,refactory,after_refining,zero_shot,deepseek-coder,1,0,0,"assert contains_unique_day('February', [(2000, 3), (2001, 4)]) == False",27.27272727272727,"{""ASR"": 2, ""COI"": 3, ""LCR"": 1, ""ROR"": 5}",11,8,"{""ASR"": 2, ""COI"": 2, ""ROR"": 4}",3,"{""COI"": 1, ""LCR"": 1, ""ROR"": 1}",0,{},3,3,0,0,0,0,1,1,0
+question_3,refactory,after_refining,zero_shot,deepseek-coder,1,0,0,"assert remove_extras([1, 2, 3]) == [1, 2, 3]",100.0,"{""COD"": 1, ""COI"": 1}",2,0,{},2,"{""COD"": 1, ""COI"": 1}",0,{},3,3,0,0,0,0,0,0,0
+question_4,refactory,after_refining,zero_shot,deepseek-coder,1,0,0,"assert sort_age([('Tom', 19, 'male'), ('Jim', 20, 'female')]) == [('Jim', 20, 'female'), ('Tom', 19, 'male')]",40.0,"{""AOR"": 2, ""COI"": 1, ""ROR"": 2}",5,3,"{""AOR"": 2, ""ROR"": 1}",2,"{""COI"": 1, ""ROR"": 1}",0,{},1,1,0,0,0,0,0,0,0
+question_5,refactory,after_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,3,0,0,0,0,0,0,0
+question_1,refactory,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},4,0,0,0,0,0,0,0,0
+question_2,refactory,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},9,0,0,0,0,0,0,0,0
+question_3,refactory,before_refining,zero_shot,deepseek-coder,1,0,0,"assert remove_extras([1,2,3]) == [1,2,3]
+assert remove_extras([1,1,1,2,2,2,3,3,3]) == [1,2,3]
+assert remove_extras([]) == []",100.0,"{""COD"": 1, ""COI"": 1}",2,0,{},2,"{""COD"": 1, ""COI"": 1}",0,{},3,0,0,0,0,0,0,0,0
+question_4,refactory,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},2,0,0,0,0,0,0,0,0
+question_5,refactory,before_refining,zero_shot,deepseek-coder,1,0,1,,0.0,{},0,0,{},0,{},0,{},3,0,0,0,0,0,0,0,0
